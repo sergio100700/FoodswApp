@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "754566985159",
+    "project_id": "foodswapp-6e7c5",
+    "storage_bucket": "foodswapp-6e7c5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754566985159:android:ff05d7228553ca2e4e95e2",
+        "android_client_info": {
+          "package_name": "com.example.foodswapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "754566985159-puc8ne1hfvkb1ua33ulnh14i6vupg5k5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuj28F2SmMBH9v9HjPYGE5P_k9k-i0nHQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "754566985159-puc8ne1hfvkb1ua33ulnh14i6vupg5k5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

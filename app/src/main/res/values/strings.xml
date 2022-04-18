@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">FoodswApp</string>
+    <string name="email">Email</string>
+    <string name="pass">Contraseña</string>
+    <string name="registrar">Registrar</string>
+    <string name="acceder">Acceder</string>
+    <string name="pregunta_registro">¿Todavía no eres cocinitas?</string>
+    <string name="web_client" translatable="false">754566985159-puc8ne1hfvkb1ua33ulnh14i6vupg5k5.apps.googleusercontent.com</string>
+    <string name="buttton_google">Entrar con Google</string>
+    <string name="prefs_file">com.example.foodswapp.PREFERENCE_FILE_KEY</string>
+    <string name="title_activity_home">Home</string>
+    <string name="title_home">Home</string>
+    <string name="title_busqueda">Descubrir</string>
+    <string name="title_notifications">Notificaciones</string>
+    <string name="title_publicar">Subir receta</string>
+    <string name="title_lista">Lista</string>
+    <string name="title_perfil">Mi Perfil</string>
+</resources>
