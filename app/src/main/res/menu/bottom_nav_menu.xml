@@ -12,7 +12,7 @@
         android:title="@string/title_busqueda" />
 
     <item
-        android:id="@+id/crear_publicacion"
+        android:id="@+id/navigation_subir"
         android:icon="@mipmap/cocinar"
         android:title="@string/title_publicar" />
 

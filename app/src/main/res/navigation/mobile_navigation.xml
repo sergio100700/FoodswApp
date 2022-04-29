@@ -29,4 +29,10 @@
         android:label="@string/title_lista"
         tools:layout="@layout/fragment_lista" />
 
+    <fragment
+        android:id="@+id/navigation_subir"
+        android:name="com.example.foodswapp.ui.subir.NuevaRecetaFragment"
+        android:label="@string/title_subir"
+        tools:layout="@layout/fragment_nuevareceta" />
+
 </navigation>

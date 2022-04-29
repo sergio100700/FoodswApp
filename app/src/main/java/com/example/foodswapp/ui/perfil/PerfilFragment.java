@@ -62,6 +62,14 @@ public class PerfilFragment extends Fragment {
             }
         });*/
 
+        final ImageView imageView = binding.imageViewPerfil;
+        perfilViewModel.getImagen().observe(getViewLifecycleOwner(), new Observer<Uri>() {
+            @Override
+            public void onChanged(Uri uri) {
+                imageView.setImageURI(uri);
+            }
+        });
+
         refreshListener(root);
 
         return root;
@@ -102,6 +110,7 @@ public class PerfilFragment extends Fragment {
              Uri uri = data.getData();
              StorageReference storage = FirebaseStorage.getInstance().getReference();
              StorageReference filepath = storage.child("imgUsers").child(uri.getLastPathSegment());
+
 
              filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                  @Override
