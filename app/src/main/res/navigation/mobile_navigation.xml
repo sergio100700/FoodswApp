@@ -23,4 +23,10 @@
         android:label="@string/title_perfil"
         tools:layout="@layout/fragment_perfil" />
 
+    <fragment
+        android:id="@+id/navigation_lista"
+        android:name="com.example.foodswapp.ui.lista.ListaFragment"
+        android:label="@string/title_lista"
+        tools:layout="@layout/fragment_lista" />
+
 </navigation>

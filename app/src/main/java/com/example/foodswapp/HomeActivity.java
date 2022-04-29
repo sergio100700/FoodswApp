@@ -14,7 +14,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,7 +63,7 @@ public class HomeActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_busqueda, R.id.navigation_perfil)
+                R.id.navigation_home, R.id.navigation_busqueda, R.id.navigation_perfil,R.id.navigation_lista)
                 .build();
 
 
@@ -79,6 +81,28 @@ public class HomeActivity extends AppCompatActivity {
     private void setup(){
 
 
+
+    }
+
+    private void listenerAdapter() {
+        /*recycleAdapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                int idSeleccionado = recyclerView.getChildAdapterPosition(view);
+                Articulo articulo = recycleAdapter.articulos.get(idSeleccionado);
+
+                if (articulo.getTipo().equals("externo")) {
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(articulo.getDescripcion()));
+                    if (i.resolveActivity(getPackageManager()) != null)
+                        startActivity(i);
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), ArticuloSeleccionado.class);
+                    intent.putExtra(EXTRA_MESSAGE, articulo.getCodigo());
+                    startActivityForResult(intent, TEXT_REQUEST);
+                }
+            }
+        });*/
 
     }
 
