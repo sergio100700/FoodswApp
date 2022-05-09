@@ -18,6 +18,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -78,10 +80,27 @@ public class HomeActivity extends AppCompatActivity {
         prefs.apply();
     }
 
-    private void setup(){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options_nav_menu,menu);
+        return true;
+    }
 
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item){
+        int id = item.getItemId();
+        switch (id){
+            case R.id.editar_perfil:
+                Toast.makeText(getApplicationContext(),"Intent para editar perfil aún por hacer",Toast.LENGTH_LONG).show();
+                break;
+            case R.id.cerrar_sesion:
+                logOut();
+                break;
+            default:break;
 
-
+        }
+        return true;
     }
 
     private void listenerAdapter() {
@@ -113,6 +132,7 @@ public class HomeActivity extends AppCompatActivity {
 
         FirebaseAuth.getInstance().signOut();
         onBackPressed();
+        startActivity(new Intent(this,LoginActivity.class));
     }
 
 }

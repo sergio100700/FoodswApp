@@ -2,9 +2,12 @@ package com.example.foodswapp.ui.perfil;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -13,29 +16,56 @@ import androidx.lifecycle.ViewModel;
 import com.bumptech.glide.Glide;
 import com.example.foodswapp.HomeActivity;
 import com.example.foodswapp.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class PerfilViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
-    private MutableLiveData<Uri> imgPerfil;
-
+    private MutableLiveData<String> username;
+    private MutableLiveData<Bitmap> imgPerfil;
+    private FirebaseFirestore firestore;
 
     public PerfilViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("MIEMAIL@gmail.com");
+        firestore = FirebaseFirestore.getInstance();
+        username = new MutableLiveData<>();
         imgPerfil = new MutableLiveData<>();
+        setUsername();
+        setImgPerfil();
+    }
 
+    private void setUsername(){
+        firestore.collection("users").document(HomeActivity.EMAIL).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                username.setValue(documentSnapshot.get("username").toString());
+            }
+        });
+    }
+
+    private void setImgPerfil(){
+        firestore.collection("users").document(HomeActivity.EMAIL).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.get("perfil")!=null) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(documentSnapshot.get("perfil").toString());
+                    imgPerfil.setValue(bitmap);
+                }
+
+            }
+        });
     }
 
     public void refresh(){
-        mText.setValue(HomeActivity.EMAIL);
-        //YimgPerfil.setValue();
+        setUsername();
+        setImgPerfil();
     }
 
     public LiveData<String> getText() {
-        return mText;
+        return username;
     }
-    public LiveData<Uri> getImagen() {
+    public LiveData<Bitmap> getImagen() {
         return imgPerfil;
     }
 

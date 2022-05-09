@@ -3,6 +3,7 @@ package com.example.foodswapp.ui.perfil;
 import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Session2Command;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,22 +29,29 @@ import com.example.foodswapp.databinding.FragmentPerfilBinding;
 import com.example.foodswapp.ui.home.HomeViewModel;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.HashMap;
 import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PerfilFragment extends Fragment {
 
     private final int GALLERY_INTENT = 10;
+    private FirebaseFirestore firestore;
     private PerfilViewModel perfilViewModel;
     private FragmentPerfilBinding binding;
     private SwipeRefreshLayout swipe;
-    private ImageView imagenPerfil;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        firestore = FirebaseFirestore.getInstance();
+
         perfilViewModel =
                 new ViewModelProvider(this).get(PerfilViewModel.class);
 
@@ -51,22 +59,21 @@ public class PerfilFragment extends Fragment {
         View root = binding.getRoot();
         swipe = root.findViewById(R.id.fragment_perfil);
 
-        imagenPerfil = root.findViewById(R.id.imageViewPerfil);
-        onClickListenerImagen();
-
-        /*final TextView textView = binding.textViewEmail;
+        final TextView userName = binding.textViewUserName;
         perfilViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                textView.setText(s);
+                userName.setText(s);
             }
-        });*/
+        });
 
-        final ImageView imageView = binding.imageViewPerfil;
-        perfilViewModel.getImagen().observe(getViewLifecycleOwner(), new Observer<Uri>() {
+        final CircleImageView imagenPerfil = binding.imageViewPerfil;
+        onClickListenerImagen(imagenPerfil);
+        perfilViewModel.getImagen().observe(getViewLifecycleOwner(), new Observer<Bitmap>() {
+
             @Override
-            public void onChanged(Uri uri) {
-                imageView.setImageURI(uri);
+            public void onChanged(Bitmap bitmap) {
+                imagenPerfil.setImageBitmap(bitmap);
             }
         });
 
@@ -92,7 +99,7 @@ public class PerfilFragment extends Fragment {
         binding = null;
     }
 
-    public void onClickListenerImagen(){
+    public void onClickListenerImagen(ImageView imagenPerfil){
         imagenPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,9 +122,11 @@ public class PerfilFragment extends Fragment {
              filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                  @Override
                  public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                     //Uri descargarFoto = taskSnapshot.getStorage().getDownloadUrl().getResult();
-                     //Glide.with(PerfilFragment.this).load(descargarFoto).into(imagenPerfil);
-                     Toast.makeText(getContext(),"Foto de perfil actualizada.",Toast.LENGTH_LONG).show();
+                     HashMap<String,Uri> imagen = new HashMap<>();
+                     imagen.put("perfil",uri);
+                     firestore.collection("users").document(HomeActivity.EMAIL).set(imagen, SetOptions.merge());
+                     perfilViewModel.refresh();
+                     Toast.makeText(getContext(),uri.toString(),Toast.LENGTH_LONG).show();
                  }
              });
          }

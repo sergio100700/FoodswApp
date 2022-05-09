@@ -21,16 +21,21 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
     private final int GOOGLE_SIGN_IN = 100;
     private FirebaseAuth auth;
+    private FirebaseFirestore firestore;
     private Button btnLogin;
     private Button btnRegistro;
     private Button btnGoogle;
@@ -43,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         auth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
 
         btnGoogle = findViewById(R.id.buttonGoogle);
         btnRegistro = findViewById(R.id.buttonRegistro);
@@ -84,6 +90,9 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
 
                             if(task.isSuccessful()){
+                                HashMap<String,String> user = new HashMap<>();
+                                user.put("username",generarUsername());
+                                firestore.collection("users").document(email).set(user);
                                 showHome(task.getResult().getUser().getEmail(), HomeActivity.ProviderType.BASIC);
                                 //Envía un correo de verificación al usuario que se ha registrado
                                 //auth.getCurrentUser().sendEmailVerification();
@@ -175,7 +184,16 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            showHome(finalAccount.getEmail(), HomeActivity.ProviderType.GOOGLE);
+                            String email = finalAccount.getEmail();
+                            firestore.collection("users").document(email).get().addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    HashMap<String,String> user = new HashMap<>();
+                                    user.put("username",generarUsername());
+                                    firestore.collection("users").document(email).set(user);
+                                }
+                            });
+                            showHome(email, HomeActivity.ProviderType.GOOGLE);
                         } else {
                             showAlert("Fallo registro google");
                         }
@@ -183,5 +201,13 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         }
+    }
+
+    private String generarUsername(){
+        String name = "chef";
+        int id = (int) Math.floor(Math.random() * 100000+1);
+        name += id;
+
+        return name;
     }
 }
