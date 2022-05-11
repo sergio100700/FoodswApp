@@ -16,4 +16,11 @@
     <string name="title_lista">Lista</string>
     <string name="title_perfil">Mi Perfil</string>
     <string name="title_subir">Nueva Receta</string>
+    <string name="hint_descripcion">Descripción breve de la receta</string>
+    <string name="btn_add">Añadir</string>
+    <string name="nuevo_ingrediente">Añadir ingrediente</string>
+    <string name="hint_ingrediente">Patata, Cebolla, Azúcar…</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="nueva_add">Nuevo ingrediente añadido</string>
 </resources>

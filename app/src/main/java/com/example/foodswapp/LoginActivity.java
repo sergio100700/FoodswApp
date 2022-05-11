@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +28,10 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.type.DateTime;
 
 import java.util.HashMap;
 
@@ -90,9 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
 
                             if(task.isSuccessful()){
-                                HashMap<String,String> user = new HashMap<>();
-                                user.put("username",generarUsername());
-                                firestore.collection("users").document(email).set(user);
+                                introducirUserName(email);
                                 showHome(task.getResult().getUser().getEmail(), HomeActivity.ProviderType.BASIC);
                                 //Envía un correo de verificación al usuario que se ha registrado
                                 //auth.getCurrentUser().sendEmailVerification();
@@ -112,21 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString();
                 String pass = etPass.getText().toString();
 
-                if(!email.isEmpty() && !pass.isEmpty()) {
-
-                    auth.signInWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-
-                            if(task.isSuccessful()){
-                                showHome(task.getResult().getUser().getEmail(), HomeActivity.ProviderType.BASIC);
-                            } else {
-                                showAlert(task.getException().getMessage());
-                            }
-                        }
-
-                    });
-                }
+                signInEmail(email,pass);
             }
         });
 
@@ -178,36 +166,86 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             if(account!=null) {
-                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
-                GoogleSignInAccount finalAccount = account;
-                auth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            String email = finalAccount.getEmail();
-                            firestore.collection("users").document(email).get().addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    HashMap<String,String> user = new HashMap<>();
-                                    user.put("username",generarUsername());
-                                    firestore.collection("users").document(email).set(user);
-                                }
-                            });
-                            showHome(email, HomeActivity.ProviderType.GOOGLE);
-                        } else {
-                            showAlert("Fallo registro google");
-                        }
-                    }
-                });
+                singInGoogle(account);
             }
         }
     }
 
-    private String generarUsername(){
-        String name = "chef";
-        int id = (int) Math.floor(Math.random() * 100000+1);
-        name += id;
+    private void signInEmail(String email, String pass){
+        if(!email.isEmpty() && !pass.isEmpty()) {
 
-        return name;
+            auth.signInWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                    if(task.isSuccessful()){
+                        showHome(task.getResult().getUser().getEmail(), HomeActivity.ProviderType.BASIC);
+                    } else {
+                        showAlert(task.getException().getMessage());
+                    }
+                }
+
+            });
+        }
+    }
+
+    private void singInGoogle(GoogleSignInAccount account){
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
+        GoogleSignInAccount finalAccount = account;
+        auth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    String email = finalAccount.getEmail();
+                    firestore.collection("users").document(email).get().addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            introducirUserName(email);
+                        }
+                    });
+                    showHome(email, HomeActivity.ProviderType.GOOGLE);
+                } else {
+                    showAlert("Fallo registro google");
+                }
+            }
+        });
+    }
+
+    private String generarUsername(){
+        String userName = "chef";
+        int id = (int) Math.floor(Math.random() * 1000000+1);
+        userName += id;
+
+        return userName;
+    }
+
+    private void introducirUserName(String email){
+        HashMap<String,String> user = new HashMap<>();
+
+            user.put("username", generarUsername());
+            firestore.collection("usernames").document(user.get("username")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+
+                        if (task.getResult().exists()) {
+                            introducirUserName(email);
+                        } else {
+                            firestore.collection("users").document(email).set(user);
+                            firestore.collection("usernames").document(user.get("username")).set(user);
+                            introducirLista(email);
+                        }
+
+                    } else {
+                        Log.e("Firebase", "Se ha producido un error al realizar el get", task.getException());
+                    }
+                }
+            });
+    }
+
+    private void introducirLista(String email){
+        HashMap<String, String> ingredientes = new HashMap<>();
+        ingredientes.put("lista","Ingrediente de prueba");
+       //firestore.collection("users").document(email).set(ingredientes);
     }
 }
