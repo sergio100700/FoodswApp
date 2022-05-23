@@ -23,4 +23,10 @@
     <string name="aceptar">Aceptar</string>
     <string name="cancelar">Cancelar</string>
     <string name="nueva_add">Nuevo ingrediente añadido</string>
+    <string name="hint_HH">HH</string>
+    <string name="hint_MM">MM</string>
+    <string name="tiempo_de_elaboracion">Tiempo de elaboración</string>
+    <string name="ingredientes">Ingredientes:</string>
+    <string name="addIngrediente">Ingrediente a añadir</string>
+    <string name="siguiente">Siguiente</string>
 </resources>

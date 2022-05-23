@@ -24,13 +24,22 @@ import com.example.foodswapp.R;
 import com.example.foodswapp.databinding.FragmentListaBinding;
 import com.example.foodswapp.ingrediente.Adaptador;
 import com.example.foodswapp.ingrediente.IngredienteLista;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.type.DateTime;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ListaFragment extends Fragment {
 
@@ -52,6 +61,7 @@ public class ListaFragment extends Fragment {
         binding = FragmentListaBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         this.context = root.getContext();
+        firestore = FirebaseFirestore.getInstance();
 
         btnAdd = root.findViewById(R.id.btnAdd);
         clickAddListener();
@@ -91,14 +101,16 @@ public class ListaFragment extends Fragment {
                 builder.setPositiveButton(R.string.aceptar, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         EditText meta = finalViewe.findViewById(R.id.etIngrediente);
-                        IngredienteLista nuevo = new IngredienteLista(meta.getText().toString());
+                        IngredienteLista nuevo = new IngredienteLista(meta.getText().toString(),false);
 
-                        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
-                        nuevo.setDate(LocalDateTime.now());
                         //Introduzco en bd
+                        Map<String,Object> ingrediente = new HashMap<>();
+                        ingrediente.put("nombre", nuevo.getNombre());
+                        ingrediente.put("fecha",nuevo.getDate());
+                        ingrediente.put("done",false);
+                        firestore.collection("users").document(HomeActivity.EMAIL).collection("ingredientes").add(ingrediente);
 
-                        //insertar
-                        ingredientes.add(nuevo);
+                        //actualizar lista
                         consultarBD();
 
                         dialog.dismiss();
@@ -134,9 +146,16 @@ public class ListaFragment extends Fragment {
                 dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogo1, int id) {
                         //borrar
-                        consultarBD();
-                        ingredientes.remove(id);
-                        adaptador.notifyDataSetChanged();
+                        IngredienteLista ingrediente = ingredientes.get(i);
+                        firestore.collection("users").document(HomeActivity.EMAIL).collection("ingredientes").document(ingrediente.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                consultarBD();
+                                adaptador.notifyDataSetChanged();
+                                Toast.makeText(getContext(),"Ingrediente eliminado con éxito",Toast.LENGTH_LONG).show();
+                            }
+                        });
+
                     }
                 });
                 dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -158,9 +177,11 @@ public class ListaFragment extends Fragment {
                 if (ingrediente.isDone()) {
                     //update
                     ingrediente.setDone(false);
+                    firestore.collection("users").document(HomeActivity.EMAIL).collection("ingredientes").document(ingrediente.getId()).update("done",false);
                 } else {
                     //update
                     ingrediente.setDone(true);
+                    firestore.collection("users").document(HomeActivity.EMAIL).collection("ingredientes").document(ingrediente.getId()).update("done",true);
                 }
             adaptador.notifyDataSetChanged();
             }
@@ -169,7 +190,20 @@ public class ListaFragment extends Fragment {
 
 
     private void consultarBD() {
-
+        firestore.collection("users").document(HomeActivity.EMAIL).collection("ingredientes").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                ingredientes.clear();
+                for(QueryDocumentSnapshot query : queryDocumentSnapshots){
+                    String id = query.getId();
+                    String nombre = (String) query.get("nombre");
+                    Timestamp fecha = (Timestamp) query.get("fecha");
+                    boolean done = (boolean) query.get("done");
+                    ingredientes.add(new IngredienteLista(id,nombre,fecha,done));
+                    adaptador.notifyDataSetChanged();
+                }
+            }
+        });
 
     }
 }

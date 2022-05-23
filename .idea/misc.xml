@@ -7,6 +7,7 @@
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/activity_home.xml" value="0.25" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/activity_login.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/activity_nueva_receta_crear.xml" value="0.33" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/cardview_receta.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_busqueda.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_dashboard.xml" value="0.36666666666666664" />
@@ -17,8 +18,10 @@
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_perfil.xml" value="0.33" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/ingrediente.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/nuevo_ingrediente.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/time_picker.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/top_perfil.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/menu/bottom_nav_menu.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/menu/nueva_receta_menu.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/menu/options_nav_menu.xml" value="0.36666666666666664" />
       </map>
     </option>

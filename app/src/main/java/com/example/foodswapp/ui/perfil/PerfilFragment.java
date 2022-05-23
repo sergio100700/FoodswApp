@@ -2,6 +2,7 @@ package com.example.foodswapp.ui.perfil;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Session2Command;
@@ -27,7 +28,9 @@ import com.example.foodswapp.HomeActivity;
 import com.example.foodswapp.R;
 import com.example.foodswapp.databinding.FragmentPerfilBinding;
 import com.example.foodswapp.ui.home.HomeViewModel;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
@@ -69,11 +72,10 @@ public class PerfilFragment extends Fragment {
 
         final CircleImageView imagenPerfil = binding.imageViewPerfil;
         onClickListenerImagen(imagenPerfil);
-        perfilViewModel.getImagen().observe(getViewLifecycleOwner(), new Observer<Bitmap>() {
-
+        perfilViewModel.getImagen().observe(getViewLifecycleOwner(), new Observer<Uri>() {
             @Override
-            public void onChanged(Bitmap bitmap) {
-                imagenPerfil.setImageBitmap(bitmap);
+            public void onChanged(Uri uri) {
+                Glide.with(getContext()).load(uri).into(imagenPerfil);
             }
         });
 
@@ -118,15 +120,21 @@ public class PerfilFragment extends Fragment {
              StorageReference storage = FirebaseStorage.getInstance().getReference();
              StorageReference filepath = storage.child("imgUsers").child(uri.getLastPathSegment());
 
-
              filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                  @Override
                  public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                     HashMap<String,Uri> imagen = new HashMap<>();
-                     imagen.put("perfil",uri);
-                     firestore.collection("users").document(HomeActivity.EMAIL).set(imagen, SetOptions.merge());
-                     perfilViewModel.refresh();
-                     Toast.makeText(getContext(),uri.toString(),Toast.LENGTH_LONG).show();
+                     taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                         @Override
+                         public void onSuccess(Uri uri) {
+
+                             HashMap<String,Uri> imagen = new HashMap<>();
+                             imagen.put("perfil",uri);
+                             firestore.collection("users").document(HomeActivity.EMAIL).set(imagen, SetOptions.merge());
+                             perfilViewModel.refresh();
+
+                             Toast.makeText(getContext(),"Imagen de perfil actualizada",Toast.LENGTH_LONG).show();
+                         }
+                     });
                  }
              });
          }

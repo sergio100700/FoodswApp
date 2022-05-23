@@ -1,29 +1,38 @@
 package com.example.foodswapp.ingrediente;
 
+import com.google.firebase.Timestamp;
+
 import java.time.LocalDateTime;
 
 public class IngredienteLista {
-    private int id;
+    private String id;
     private String nombre;
     private boolean done;
-    private LocalDateTime date;
+    private Timestamp date;
 
-    public IngredienteLista(int id, String nombre, boolean done, LocalDateTime date) {
+    public IngredienteLista(String id, String nombre,Timestamp fecha, boolean done) {
         this.id = id;
         this.nombre = nombre;
         this.done = done;
-        this.date = date;
+        this.date = fecha;
     }
 
     public IngredienteLista(String nombre) {
         this.nombre = nombre;
+        this.date = Timestamp.now();
     }
 
-    public int getId() {
+    public IngredienteLista(String nombre,boolean done) {
+        this.nombre = nombre;
+        this.date = Timestamp.now();
+        this.done = done;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -43,11 +52,11 @@ public class IngredienteLista {
         this.done = done;
     }
 
-    public LocalDateTime getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

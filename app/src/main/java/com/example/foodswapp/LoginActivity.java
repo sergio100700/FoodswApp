@@ -24,6 +24,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -197,10 +198,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     String email = finalAccount.getEmail();
-                    firestore.collection("users").document(email).get().addOnFailureListener(new OnFailureListener() {
+                    firestore.collection("users").document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
-                        public void onFailure(@NonNull Exception e) {
-                            introducirUserName(email);
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(!task.getResult().exists()){
+                                introducirUserName(email);
+                            }
                         }
                     });
                     showHome(email, HomeActivity.ProviderType.GOOGLE);
@@ -233,7 +236,6 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             firestore.collection("users").document(email).set(user);
                             firestore.collection("usernames").document(user.get("username")).set(user);
-                            introducirLista(email);
                         }
 
                     } else {
@@ -243,9 +245,4 @@ public class LoginActivity extends AppCompatActivity {
             });
     }
 
-    private void introducirLista(String email){
-        HashMap<String, String> ingredientes = new HashMap<>();
-        ingredientes.put("lista","Ingrediente de prueba");
-       //firestore.collection("users").document(email).set(ingredientes);
-    }
 }

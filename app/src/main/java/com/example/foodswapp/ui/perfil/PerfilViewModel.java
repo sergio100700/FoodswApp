@@ -24,7 +24,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class PerfilViewModel extends ViewModel {
 
     private MutableLiveData<String> username;
-    private MutableLiveData<Bitmap> imgPerfil;
+    private MutableLiveData<Uri> imgPerfil;
     private FirebaseFirestore firestore;
 
     public PerfilViewModel() {
@@ -49,8 +49,8 @@ public class PerfilViewModel extends ViewModel {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.get("perfil")!=null) {
-                    Bitmap bitmap = BitmapFactory.decodeFile(documentSnapshot.get("perfil").toString());
-                    imgPerfil.setValue(bitmap);
+                    Uri uri = Uri.parse(documentSnapshot.get("perfil").toString());
+                    imgPerfil.setValue(uri);
                 }
 
             }
@@ -65,7 +65,7 @@ public class PerfilViewModel extends ViewModel {
     public LiveData<String> getText() {
         return username;
     }
-    public LiveData<Bitmap> getImagen() {
+    public LiveData<Uri> getImagen() {
         return imgPerfil;
     }
 

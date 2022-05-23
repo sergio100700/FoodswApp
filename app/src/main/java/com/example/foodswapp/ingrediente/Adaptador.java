@@ -47,7 +47,7 @@ public class Adaptador extends BaseAdapter {
         TextView texto = view.findViewById(R.id.tvIngrediente);
         TextView fecha = view.findViewById(R.id.tvFecha);
 
-        fecha.setText(ingrediente.getDate().getDayOfMonth()+ "/"+ ingrediente.getDate().getMonthValue());
+        fecha.setText(ingrediente.getDate().toDate().getDay()+ "/"+ ingrediente.getDate().toDate().getMonth());
         texto.setText(ingrediente.getNombre());
 
         if(ingrediente.isDone()){
