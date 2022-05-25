@@ -14,7 +14,6 @@ public class ViewHolderReceta extends RecyclerView.ViewHolder {
     public ImageView itemImaxe;
     public TextView titulo;
     public TextView tiempo;
-    public TextView likes;
 
     public ViewHolderReceta(@NonNull View itemView) {
         super(itemView);
@@ -22,8 +21,6 @@ public class ViewHolderReceta extends RecyclerView.ViewHolder {
         itemImaxe = itemView.findViewById(R.id.imagen);
         titulo = itemView.findViewById(R.id.textViewTitulo);
         tiempo = itemView.findViewById(R.id.textViewTiempo);
-        likes = itemView.findViewById(R.id.textViewLikes);
-
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.foodswapp.receta;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,16 +9,27 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.foodswapp.HomeActivity;
 import com.example.foodswapp.R;
+import com.example.foodswapp.ingrediente.IngredienteLista;
+import com.example.foodswapp.ui.perfil.PerfilFragment;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-public class AdapterReceta extends RecyclerView.Adapter implements View.OnClickListener {
+import java.util.ArrayList;
+
+public class AdapterReceta extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
 
 
-    //public ArrayList<Articulo> articulos = new ArrayList<Articulo>();
-
+    private ArrayList<Receta> recetas = new ArrayList<Receta>();;
     private View.OnClickListener listener;
+    private final Context context = PerfilFragment.context;
 
-    public AdapterReceta(){
+    public AdapterReceta() {
 
     }
 
@@ -38,36 +50,24 @@ public class AdapterReceta extends RecyclerView.Adapter implements View.OnClickL
 
 
     @Override
-
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
-        ViewHolderReceta viewHolderMeu = (ViewHolderReceta) viewHolder;
+        ViewHolderReceta viewHolderReceta = (ViewHolderReceta) viewHolder;
 
-        //Articulo articulo = articulos.get(i);
-
-        /*viewHolderMeu.itemImaxe.setImageBitmap(articulo.getImaxe());
-        String titulo = articulo.getTitulo();
-        if(titulo.length() > 45){
-            viewHolderMeu.titulo.setText(titulo.substring(0,45) + "...");
+        Receta receta = recetas.get(i);
+        if(receta.getImagen()==null){
+            viewHolderReceta.itemImaxe.setImageResource(R.mipmap.librococina);
         } else {
-            viewHolderMeu.titulo.setText(articulo.getTitulo());
-        }*/
+            Glide.with(context).load(Uri.parse(receta.getImagen())).into(viewHolderReceta.itemImaxe);
+        }
 
-
-        //viewHolderMeu.precio.setText(MainActivity.formateador.format(articulo.getPrecio()) + "€");
-
-        /*if (articulo.getTipo().equals("externo")) {
-            SpannableString mitextoU = new SpannableString("AD " + articulo.getDescripcion().substring(0, 20));
-            mitextoU.setSpan(new UnderlineSpan(), 0, mitextoU.length(), 0);
-            viewHolderMeu.anuncio.setText(mitextoU);
-            viewHolderMeu.anuncio.setTextColor(Color.BLUE);
-        }*/
-
+        viewHolderReceta.titulo.setText(receta.getTitulo());
+        viewHolderReceta.tiempo.setText(receta.getTiempo());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return recetas.size();
     }
 
 
@@ -82,6 +82,11 @@ public class AdapterReceta extends RecyclerView.Adapter implements View.OnClickL
         }
     }
 
+    public void updateRecetasList(ArrayList<Receta> recetas){
+        //this.recetas.clear();
+        this.recetas = recetas;
+        notifyDataSetChanged();
+    }
 
 }
 

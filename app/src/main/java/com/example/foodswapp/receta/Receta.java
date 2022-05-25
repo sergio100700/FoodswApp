@@ -2,10 +2,11 @@ package com.example.foodswapp.receta;
 
 import android.net.Uri;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class Receta {
+public class Receta implements Serializable {
     private String titulo;
     private int dificultad;
     private String tiempo;//horas minutos
@@ -13,11 +14,12 @@ public class Receta {
     private boolean vegetariano;
     private boolean sinGluten;
     private List<Comentario> comentarios;
-    private Uri imagen;
+    private String imagen;
     private List<String> ingredientes;
-    private Map<Integer,String> pasos;
+    private List<String> pasos;
+    private double valoraciones;
 
-    public Receta(String titulo, int dificultad, String tiempo, boolean vegano, boolean vegetariano, boolean sinGluten, List<Comentario> comentarios, Uri imagen) {
+    public Receta(String titulo, int dificultad, String tiempo, boolean vegano, boolean vegetariano, boolean sinGluten, List<Comentario> comentarios, String imagen) {
         this.titulo = titulo;
         this.dificultad = dificultad;
         this.tiempo = tiempo;
@@ -36,6 +38,17 @@ public class Receta {
         this.vegetariano = vegetariano;
         this.sinGluten = sinGluten;
         this.comentarios = comentarios;
+    }
+
+    public Receta(String titulo, int dificultad, String tiempo, boolean vegano, boolean vegetariano, boolean sinGluten, String imagen, double valoraciones) {
+        this.titulo = titulo;
+        this.dificultad = dificultad;
+        this.tiempo = tiempo;
+        this.vegano = vegano;
+        this.vegetariano = vegetariano;
+        this.sinGluten = sinGluten;
+        this.imagen = imagen;
+        this.valoraciones = valoraciones;
     }
 
     public String getTitulo() {
@@ -94,11 +107,11 @@ public class Receta {
         this.comentarios = comentarios;
     }
 
-    public Uri getImagen() {
+    public String getImagen() {
         return imagen;
     }
 
-    public void setImagen(Uri imagen) {
+    public void setImagen(String imagen) {
         this.imagen = imagen;
     }
 
@@ -110,11 +123,19 @@ public class Receta {
         this.ingredientes = ingredientes;
     }
 
-    public Map<Integer, String> getPasos() {
+    public List<String> getPasos() {
         return pasos;
     }
 
-    public void setPasos(Map<Integer, String> pasos) {
+    public void setPasos(List<String> pasos) {
         this.pasos = pasos;
+    }
+
+    public double getValoraciones() {
+        return valoraciones;
+    }
+
+    public void setValoraciones(double valoraciones) {
+        this.valoraciones = valoraciones;
     }
 }

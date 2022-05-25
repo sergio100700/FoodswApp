@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FoodswApp">
         <activity
+            android:name=".ui.subir.NuevaRecetaPasos"
+            android:exported="false" />
+        <activity
             android:name=".ui.subir.NuevaRecetaCrear"
             android:exported="false" />
         <activity

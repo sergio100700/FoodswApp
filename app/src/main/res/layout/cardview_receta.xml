@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:foreground="?android:attr/selectableItemBackground"
@@ -21,8 +21,8 @@
 
         <ImageView
             android:id="@+id/imagen"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="100sp"
+            android:layout_height="100sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -32,8 +32,9 @@
             android:id="@+id/textViewTitulo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:maxLines="2"
             android:text="Titulo de receta"
-            android:textSize="20sp"
+            android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -44,32 +45,15 @@
 
         <TextView
             android:id="@+id/textViewTiempo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:text="0 horas 0 minutos"
+            android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewTitulo" />
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="58dp"
-            android:layout_height="59dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTitulo"
-            app:srcCompat="@mipmap/espatula" />
 
-        <TextView
-            android:id="@+id/textViewLikes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="40dp"
-            android:layout_marginBottom="20dp"
-            android:text="0"
-            android:textSize="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-            app:layout_constraintEnd_toEndOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

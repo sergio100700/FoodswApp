@@ -27,6 +27,16 @@
     <string name="hint_MM">MM</string>
     <string name="tiempo_de_elaboracion">Tiempo de elaboración</string>
     <string name="ingredientes">Ingredientes:</string>
-    <string name="addIngrediente">Ingrediente a añadir</string>
+    <string name="addIngrediente">Ingrediente y cantidad a añadir</string>
     <string name="siguiente">Siguiente</string>
+    <string name="err_titulo_obligatorio">Título obligatorio</string>
+    <string name="horas_y">\ horas y \</string>
+    <string name="minutos">\ minutos\</string>
+    <string name="err_solo_minutos">Sólo minutos</string>
+    <string name="err_noIngredientes">Toda receta tiene al menos un ingrediente, ¿Cierto?</string>
+    <string name="paso">Paso </string>
+    <string name="hint_ejPaso">Comenzaremos preparando un bol y un cucharón para mezclar los ingredientes...</string>
+    <string name="err_noPasos">Toda receta tiene al menos un paso, ¿Cierto?</string>
+    <string name="btnAdd">Añadir</string>
+    <string name="btnGuardar">Guardar</string>
 </resources>

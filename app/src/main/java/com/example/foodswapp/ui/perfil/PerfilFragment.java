@@ -21,12 +21,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.foodswapp.HomeActivity;
 import com.example.foodswapp.R;
 import com.example.foodswapp.databinding.FragmentPerfilBinding;
+import com.example.foodswapp.receta.AdapterReceta;
+import com.example.foodswapp.receta.Receta;
 import com.example.foodswapp.ui.home.HomeViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,6 +41,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -49,6 +54,8 @@ public class PerfilFragment extends Fragment {
     private PerfilViewModel perfilViewModel;
     private FragmentPerfilBinding binding;
     private SwipeRefreshLayout swipe;
+    private AdapterReceta adapterReceta;
+    public static Context context;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -60,8 +67,18 @@ public class PerfilFragment extends Fragment {
 
         binding = FragmentPerfilBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        context = root.getContext();
+
         swipe = root.findViewById(R.id.fragment_perfil);
 
+        //Adaptador y montaje RecyclerView
+        adapterReceta = new AdapterReceta();
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(root.getContext(),3);
+        RecyclerView recyclerView = root.findViewById(R.id.recyclerViewPerfil);
+        recyclerView.setLayoutManager(layoutManager);
+
+
+        //Bindings campos de usuario
         final TextView userName = binding.textViewUserName;
         perfilViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -76,6 +93,15 @@ public class PerfilFragment extends Fragment {
             @Override
             public void onChanged(Uri uri) {
                 Glide.with(getContext()).load(uri).into(imagenPerfil);
+            }
+        });
+
+        final RecyclerView contenedor = binding.recyclerViewPerfil;
+        perfilViewModel.getRecetasMutableLiveData().observe(getViewLifecycleOwner(), new Observer<ArrayList<Receta>>() {
+            @Override
+            public void onChanged(ArrayList<Receta> recetas) {
+                adapterReceta.updateRecetasList(recetas);
+                contenedor.setAdapter(adapterReceta);
             }
         });
 
