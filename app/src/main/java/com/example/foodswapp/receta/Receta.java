@@ -1,23 +1,45 @@
 package com.example.foodswapp.receta;
 
-import android.net.Uri;
+import com.example.foodswapp.receta.comentarios.Comentario;
+import com.google.firebase.Timestamp;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 public class Receta implements Serializable {
+    private String id;
+    private String username;
     private String titulo;
     private int dificultad;
     private String tiempo;//horas minutos
     private boolean vegano;
     private boolean vegetariano;
     private boolean sinGluten;
-    private List<Comentario> comentarios;
+    private double valoraciones;
     private String imagen;
+    private transient Timestamp fecha;
+    private List<Comentario> comentarios;
     private List<String> ingredientes;
     private List<String> pasos;
-    private double valoraciones;
+
+    public Receta(String id, String username, String titulo, int dificultad, String tiempo, boolean vegano, boolean vegetariano,
+                  boolean sinGluten, double valoraciones, String imagen, Timestamp fecha, List<Comentario> comentarios,
+                  List<String> ingredientes, List<String> pasos) {
+        this.id = id;
+        this.username = username;
+        this.titulo = titulo;
+        this.dificultad = dificultad;
+        this.tiempo = tiempo;
+        this.vegano = vegano;
+        this.vegetariano = vegetariano;
+        this.sinGluten = sinGluten;
+        this.valoraciones = valoraciones;
+        this.imagen = imagen;
+        this.fecha = fecha;
+        this.comentarios = comentarios;
+        this.ingredientes = ingredientes;
+        this.pasos = pasos;
+    }
 
     public Receta(String titulo, int dificultad, String tiempo, boolean vegano, boolean vegetariano, boolean sinGluten, List<Comentario> comentarios, String imagen) {
         this.titulo = titulo;
@@ -49,6 +71,30 @@ public class Receta implements Serializable {
         this.sinGluten = sinGluten;
         this.imagen = imagen;
         this.valoraciones = valoraciones;
+    }
+
+    public Timestamp getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Timestamp fecha) {
+        this.fecha = fecha;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getTitulo() {

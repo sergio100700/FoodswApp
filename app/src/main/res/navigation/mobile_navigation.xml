@@ -34,5 +34,10 @@
         android:name="com.example.foodswapp.ui.subir.NuevaRecetaFragment"
         android:label="@string/title_subir"
         tools:layout="@layout/fragment_nuevareceta" />
+    <fragment
+        android:id="@+id/comentariosFragment"
+        android:name="com.example.foodswapp.receta.comentarios.ComentariosFragment"
+        android:label="fragment_comentarios"
+        tools:layout="@layout/fragment_comentarios" />
 
 </navigation>

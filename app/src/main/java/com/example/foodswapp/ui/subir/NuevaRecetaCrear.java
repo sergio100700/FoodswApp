@@ -3,12 +3,14 @@ package com.example.foodswapp.ui.subir;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +35,8 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,8 +51,7 @@ public class NuevaRecetaCrear extends AppCompatActivity {
     private ArrayAdapter<String> adaptador;
     private ListView listaIngredientes;
     private Receta receta;
-    private final int GALLERY_INTENT = 10;
-    public static final int RECETA_FINALIZADA = 20;
+    public static final int RECETA_FINALIZADA = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,24 +120,38 @@ public class NuevaRecetaCrear extends AppCompatActivity {
         imagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image/");
-                startActivityForResult(intent,GALLERY_INTENT);
+                startCropActivity();
             }
         });
+    }
+
+    private void startCropActivity(){
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels; // ancho absoluto en pixels
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON).setFixAspectRatio(true)
+                .start(this);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==GALLERY_INTENT && resultCode == RESULT_OK){
-            Uri uri = data.getData();
-            receta.setImagen(uri.toString());
-            imagen.setImageURI(uri);
-        }
+
         if(requestCode==RECETA_FINALIZADA){
             finish();
         }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                imagen.setImageURI(resultUri);
+                receta.setImagen(resultUri.toString());
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
+
     }
 
     @Override

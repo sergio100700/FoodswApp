@@ -1,31 +1,26 @@
 package com.example.foodswapp.ui.perfil;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.foodswapp.HomeActivity;
-import com.example.foodswapp.R;
-import com.example.foodswapp.receta.AdapterReceta;
+import com.example.foodswapp.receta.comentarios.Comentario;
 import com.example.foodswapp.receta.Receta;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PerfilViewModel extends ViewModel {
 
@@ -42,7 +37,7 @@ public class PerfilViewModel extends ViewModel {
         recetas = new MutableLiveData<>();
         setUsername();
         setImgPerfil();
-        init();
+        populateList();
     }
 
     private void setUsername() {
@@ -67,10 +62,6 @@ public class PerfilViewModel extends ViewModel {
         });
     }
 
-    private void init(){
-        populateList();
-    }
-
     private void populateList() {
 
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -79,9 +70,9 @@ public class PerfilViewModel extends ViewModel {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 ArrayList<Receta> recetaLista = new ArrayList<>();
                 for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                    //String id = query.getId(); IGUAL NO lo necesito
+                    String id = query.getId();
                     //Timestamp fecha = (Timestamp) query.get("fecha"); igual lo tengo que implementar para mostrar por fecha
-
+                    String username = (String) query.get("username");
                     String titulo = (String) query.get("titulo");
                     String tiempo = (String) query.get("tiempo");
                     Number dificultad = (Number) query.get("dificultad");
@@ -89,10 +80,56 @@ public class PerfilViewModel extends ViewModel {
                     Boolean vegetariano = query.getBoolean("vegetariano");
                     Boolean sinGluten = query.getBoolean("sinGluten");
                     String imagen = (String) query.get("imagen");
-                    Integer i = Integer.valueOf(String.valueOf(dificultad));
-                    recetaLista.add(new Receta(titulo, i, tiempo, vegano, vegetariano, sinGluten, imagen, 2.2));
+                    Integer dif = Integer.valueOf(String.valueOf(dificultad));
+                    Double valoraciones = (Double) query.get("valoraciones");
+                    Timestamp fecha = (Timestamp) query.get("fecha");
+
+                    List<Comentario> comentarios = new ArrayList<>();
+                    firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas")
+                            .document(id).collection("comentarios").get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
+                                comentarios.add(new Comentario((String)query.get("username"),(String) query.get("comentario"),(Timestamp) query.get("fecha")));
+                            }
+                        }
+                    });
+
+                    List<String> ingredientes = new ArrayList<>();
+                    firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas")
+                            .document(id).collection("ingredientes").get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
+                                        ingredientes.add((String)query.get("nombre"));
+                                    }
+                                }
+                            });
+
+                    Map<Integer,String> pasosDesordenados = new HashMap<>();
+                    firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas")
+                            .document(id).collection("pasos").get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
+                                        pasosDesordenados.put((int) (long) query.get("numero"),(String) query.get("texto"));
+                                    }
+                                }
+                            });
+                    List<String> pasos = new ArrayList<>();
+                    for(int i  = 1;i< pasosDesordenados.size();i++){
+                        pasos.add(pasosDesordenados.get(i));
+                    }
+                    recetaLista.add(new Receta(id,username,titulo, dif, tiempo, vegano, vegetariano, sinGluten, valoraciones,imagen,fecha,comentarios,ingredientes, pasos));
                 }
                 listaRecetas = recetaLista;
+
+                //Odenar recetas del perfil por su fecha de publicación
+                listaRecetas.sort(Comparator.comparing(Receta::getFecha));
+
                 recetas.setValue(listaRecetas);
             }
         });
@@ -102,7 +139,7 @@ public class PerfilViewModel extends ViewModel {
     public void refresh() {
         setUsername();
         setImgPerfil();
-        init();
+        populateList();
     }
 
     public LiveData<String> getText() {

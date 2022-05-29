@@ -39,4 +39,11 @@
     <string name="err_noPasos">Toda receta tiene al menos un paso, ¿Cierto?</string>
     <string name="btnAdd">Añadir</string>
     <string name="btnGuardar">Guardar</string>
+    <string name="editar">Editar</string>
+    <string name="denunciar">Denunciar</string>
+    <string name="compartir">Compartir</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="enviar">Enviar</string>
+    <string name="hint_comentario">Añade un comentario aquí</string>
 </resources>

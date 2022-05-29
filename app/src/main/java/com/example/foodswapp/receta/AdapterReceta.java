@@ -83,9 +83,12 @@ public class AdapterReceta extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void updateRecetasList(ArrayList<Receta> recetas){
-        //this.recetas.clear();
         this.recetas = recetas;
         notifyDataSetChanged();
+    }
+
+    public ArrayList<Receta> getRecetas(){
+        return this.recetas;
     }
 
 }

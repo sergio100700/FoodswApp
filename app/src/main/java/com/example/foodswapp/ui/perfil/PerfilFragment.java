@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -31,6 +32,7 @@ import com.example.foodswapp.R;
 import com.example.foodswapp.databinding.FragmentPerfilBinding;
 import com.example.foodswapp.receta.AdapterReceta;
 import com.example.foodswapp.receta.Receta;
+import com.example.foodswapp.receta.RecetaSeleccionada;
 import com.example.foodswapp.ui.home.HomeViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -50,6 +52,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PerfilFragment extends Fragment {
 
     private final int GALLERY_INTENT = 10;
+    private final int SELECCION_PROPIETARIO = 20;
     private FirebaseFirestore firestore;
     private PerfilViewModel perfilViewModel;
     private FragmentPerfilBinding binding;
@@ -73,7 +76,7 @@ public class PerfilFragment extends Fragment {
 
         //Adaptador y montaje RecyclerView
         adapterReceta = new AdapterReceta();
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(root.getContext(),3);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(root.getContext(), 3);
         RecyclerView recyclerView = root.findViewById(R.id.recyclerViewPerfil);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -105,12 +108,13 @@ public class PerfilFragment extends Fragment {
             }
         });
 
+        listenerAdapter(contenedor);
         refreshListener(root);
 
         return root;
     }
 
-    private void refreshListener(View view){
+    private void refreshListener(View view) {
         swipe = view.findViewById(R.id.fragment_perfil);
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -121,19 +125,35 @@ public class PerfilFragment extends Fragment {
         });
     }
 
+    private void listenerAdapter(RecyclerView recyclerView) {
+        adapterReceta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                int idSeleccionado = recyclerView.getChildAdapterPosition(view);
+                Receta receta = adapterReceta.getRecetas().get(idSeleccionado);
+
+                Intent intent = new Intent(getContext(), RecetaSeleccionada.class);
+                intent.putExtra("receta", receta);
+                startActivityForResult(intent,SELECCION_PROPIETARIO);
+            }
+        });
+
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
 
-    public void onClickListenerImagen(ImageView imagenPerfil){
+    public void onClickListenerImagen(ImageView imagenPerfil) {
         imagenPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 intent.setType("image/");
-                startActivityForResult(intent,GALLERY_INTENT);
+                startActivityForResult(intent, GALLERY_INTENT);
             }
         });
     }
@@ -141,28 +161,28 @@ public class PerfilFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-         if(requestCode==GALLERY_INTENT && resultCode == RESULT_OK){
-             Uri uri = data.getData();
-             StorageReference storage = FirebaseStorage.getInstance().getReference();
-             StorageReference filepath = storage.child("imgUsers").child(uri.getLastPathSegment());
+        if (requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+            StorageReference storage = FirebaseStorage.getInstance().getReference();
+            StorageReference filepath = storage.child("imgUsers").child(uri.getLastPathSegment());
 
-             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                 @Override
-                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                     taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                         @Override
-                         public void onSuccess(Uri uri) {
+            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
 
-                             HashMap<String,Uri> imagen = new HashMap<>();
-                             imagen.put("perfil",uri);
-                             firestore.collection("users").document(HomeActivity.EMAIL).set(imagen, SetOptions.merge());
-                             perfilViewModel.refresh();
+                            HashMap<String, Uri> imagen = new HashMap<>();
+                            imagen.put("perfil", uri);
+                            firestore.collection("users").document(HomeActivity.EMAIL).set(imagen, SetOptions.merge());
+                            perfilViewModel.refresh();
 
-                             Toast.makeText(getContext(),"Imagen de perfil actualizada",Toast.LENGTH_LONG).show();
-                         }
-                     });
-                 }
-             });
-         }
+                            Toast.makeText(getContext(), "Imagen de perfil actualizada", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            });
+        }
     }
 }

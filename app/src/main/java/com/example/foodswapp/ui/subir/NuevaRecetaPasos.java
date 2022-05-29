@@ -28,8 +28,12 @@ import com.example.foodswapp.receta.Receta;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -189,6 +193,8 @@ public class NuevaRecetaPasos extends AppCompatActivity {
         subir.put("vegetariano", receta.isVegetariano());
         subir.put("sinGluten", receta.isSinGluten());
         subir.put("imagen", uri);
+        subir.put("valoraciones",0.0);
+        subir.put("fecha", Timestamp.now());
 
         Task<DocumentReference> addReceta = firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas").add(subir);
 
@@ -221,6 +227,24 @@ public class NuevaRecetaPasos extends AppCompatActivity {
                             collection("pasos").add(pasosReceta);
                 }
 
+                //ID receta
+                Map<String,String> idReceta = new HashMap<>();
+                idReceta.put("id", referenceReceta.getId());
+                firestore.collection("users").document(HomeActivity.EMAIL).
+                        collection("recetas").document(referenceReceta.getId()).
+                        set(idReceta, SetOptions.merge());
+
+                //Username
+                Map<String,String> username = new HashMap<>();
+                firestore.collection("users").document(HomeActivity.EMAIL).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        username.put("username",task.getResult().get("username").toString());
+                        firestore.collection("users").document(HomeActivity.EMAIL).
+                                collection("recetas").document(referenceReceta.getId()).
+                                set(username, SetOptions.merge());
+                    }
+                });
 
                 Toast.makeText(getApplicationContext(), "Receta subida con éxito!", Toast.LENGTH_LONG).show();
                 finish();
