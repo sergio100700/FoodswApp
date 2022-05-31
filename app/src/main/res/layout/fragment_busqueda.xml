@@ -8,10 +8,11 @@
 
     <SearchView
         android:id="@+id/searchViewRecetas"
-        android:layout_width="409dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:queryHint="Nombre de la receta"
-        android:tooltipText="Nombre de la receta"
+        android:queryHint="Nombre de la receta o usuario"
+        android:tooltipText="Nombre de la receta o usuario"
+        android:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -102,6 +103,9 @@
         android:layout_width="match_parent"
         android:layout_height="53dp"
         android:layout_marginTop="12dp"
+        android:iconifiedByDefault="false"
+        android:queryHint="Ingrediente"
+        android:tooltipText="Ingrediente"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />

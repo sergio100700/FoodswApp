@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Receta implements Serializable {
+    private static final long serialVersionUID = 44L;
     private String id;
     private String username;
     private String titulo;
@@ -15,7 +16,8 @@ public class Receta implements Serializable {
     private boolean vegano;
     private boolean vegetariano;
     private boolean sinGluten;
-    private double valoraciones;
+    private int valoraciones;
+    private double valoracionMedia;
     private String imagen;
     private transient Timestamp fecha;
     private List<Comentario> comentarios;
@@ -23,7 +25,7 @@ public class Receta implements Serializable {
     private List<String> pasos;
 
     public Receta(String id, String username, String titulo, int dificultad, String tiempo, boolean vegano, boolean vegetariano,
-                  boolean sinGluten, double valoraciones, String imagen, Timestamp fecha, List<Comentario> comentarios,
+                  boolean sinGluten, int valoraciones,double valoracionMedia, String imagen, Timestamp fecha, List<Comentario> comentarios,
                   List<String> ingredientes, List<String> pasos) {
         this.id = id;
         this.username = username;
@@ -34,6 +36,7 @@ public class Receta implements Serializable {
         this.vegetariano = vegetariano;
         this.sinGluten = sinGluten;
         this.valoraciones = valoraciones;
+        this.valoracionMedia = valoracionMedia;
         this.imagen = imagen;
         this.fecha = fecha;
         this.comentarios = comentarios;
@@ -62,7 +65,7 @@ public class Receta implements Serializable {
         this.comentarios = comentarios;
     }
 
-    public Receta(String titulo, int dificultad, String tiempo, boolean vegano, boolean vegetariano, boolean sinGluten, String imagen, double valoraciones) {
+    public Receta(String titulo, int dificultad, String tiempo, boolean vegano, boolean vegetariano, boolean sinGluten, String imagen, int valoraciones) {
         this.titulo = titulo;
         this.dificultad = dificultad;
         this.tiempo = tiempo;
@@ -177,11 +180,19 @@ public class Receta implements Serializable {
         this.pasos = pasos;
     }
 
-    public double getValoraciones() {
+    public int getValoraciones() {
         return valoraciones;
     }
 
-    public void setValoraciones(double valoraciones) {
+    public void setValoraciones(int valoraciones) {
         this.valoraciones = valoraciones;
+    }
+
+    public double getValoracionMedia() {
+        return valoracionMedia;
+    }
+
+    public void setValoracionMedia(double valoracionMedia) {
+        this.valoracionMedia = valoracionMedia;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.foodswapp.receta.comentarios;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,15 +9,23 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.foodswapp.R;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -57,17 +66,23 @@ public class AdapterComentarios extends BaseAdapter {
         TextView fecha = view.findViewById(R.id.textViewFechaC);
         CircleImageView imagen = view.findViewById(R.id.imagenUsuarioC);
 
-        //fecha.setText(comentario.getFecha().toDate().getDay() + "/" + comentario.getFecha().toDate().getMonth());
+        fecha.setText(comentario.getFecha().replace(" GMT",""));
         texto.setText(comentario.getTexto());
 
-        /*FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        CollectionReference users = firestore.collection("users");
-        Query query = users.whereEqualTo("username",comentario.getUserName());
-        Task<QuerySnapshot> querySnapshot = query.get();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        firestore.collection("users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
-        for (DocumentSnapshot document : querySnapshot.getResult().getDocuments()) {
-            Toast.makeText(context, String.valueOf(document.get("perfil")), Toast.LENGTH_SHORT).show();
-        }*/
+                for(DocumentSnapshot doc:queryDocumentSnapshots){
+                    if(((String) doc.get("username")).equals(comentario.getUserName())) {
+                        Uri uri = Uri.parse(doc.get("perfil").toString());
+                        Glide.with(context).load(uri).into(imagen);
+                        break;
+                    }
+                }
+            }
+        });
 
         return view;
 

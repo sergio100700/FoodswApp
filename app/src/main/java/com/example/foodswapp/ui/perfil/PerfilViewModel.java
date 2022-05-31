@@ -80,9 +80,13 @@ public class PerfilViewModel extends ViewModel {
                     Boolean vegetariano = query.getBoolean("vegetariano");
                     Boolean sinGluten = query.getBoolean("sinGluten");
                     String imagen = (String) query.get("imagen");
-                    Integer dif = Integer.valueOf(String.valueOf(dificultad));
-                    Double valoraciones = (Double) query.get("valoraciones");
+                    Number valoraciones = (Number) query.get("valoraciones");
+                    Number valoracionMedia = (Number) query.get("valoracionMedia");
                     Timestamp fecha = (Timestamp) query.get("fecha");
+
+                    Integer dif = Integer.valueOf(String.valueOf(dificultad));
+                    Integer val = Integer.valueOf(String.valueOf(valoraciones));
+                    Double media = Double.valueOf(String.valueOf(valoracionMedia));
 
                     List<Comentario> comentarios = new ArrayList<>();
                     firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas")
@@ -91,7 +95,9 @@ public class PerfilViewModel extends ViewModel {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                                comentarios.add(new Comentario((String)query.get("username"),(String) query.get("comentario"),(Timestamp) query.get("fecha")));
+                                Timestamp time = (Timestamp) query.get("fecha");
+
+                                comentarios.add(new Comentario((String)query.get("username"),(String) query.get("comentario"),time.toDate().toGMTString()));
                             }
                         }
                     });
@@ -123,7 +129,7 @@ public class PerfilViewModel extends ViewModel {
                     for(int i  = 1;i< pasosDesordenados.size();i++){
                         pasos.add(pasosDesordenados.get(i));
                     }
-                    recetaLista.add(new Receta(id,username,titulo, dif, tiempo, vegano, vegetariano, sinGluten, valoraciones,imagen,fecha,comentarios,ingredientes, pasos));
+                    recetaLista.add(new Receta(id,username,titulo, dif, tiempo, vegano, vegetariano, sinGluten, val,media,imagen,fecha,comentarios,ingredientes, pasos));
                 }
                 listaRecetas = recetaLista;
 

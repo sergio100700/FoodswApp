@@ -193,7 +193,8 @@ public class NuevaRecetaPasos extends AppCompatActivity {
         subir.put("vegetariano", receta.isVegetariano());
         subir.put("sinGluten", receta.isSinGluten());
         subir.put("imagen", uri);
-        subir.put("valoraciones",0.0);
+        subir.put("valoraciones",0);
+        subir.put("valoracionMedia",0.0);
         subir.put("fecha", Timestamp.now());
 
         Task<DocumentReference> addReceta = firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas").add(subir);

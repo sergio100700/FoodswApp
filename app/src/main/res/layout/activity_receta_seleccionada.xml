@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:isScrollContainer="true"
     tools:context=".receta.RecetaSeleccionada">
+
+    <LinearLayout
+    android:id="@+id/linearlayoutFotoReceta"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
 
     <ImageView
         android:id="@+id/imagenRS"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarRS"
         app:srcCompat="@mipmap/librococina" />
 
 
@@ -22,41 +29,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
+        android:textStyle="bold"
+        android:padding="3dp"
         android:text="Título de receta" />
 
     <Space
+        android:id="@+id/space3"
         android:layout_width="match_parent"
         android:layout_height="10sp"
         tools:ignore="SmallSp" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutCompat1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:numStars="5"/>
+            android:numStars="5" />
+
         <TextView
             android:id="@+id/textViewValoracionMedia"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="13sp"
+            android:text="4.5"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:text="4.5"/>
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/imageButtonComentarios"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
-            android:scaleType="fitCenter"
             android:adjustViewBounds="true"
+            android:background="@color/white"
             android:padding="5dp"
+            android:scaleType="fitCenter"
             app:srcCompat="@mipmap/comments" />
-
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -67,13 +79,18 @@
         android:layout_height="3dp"
         android:background="?android:attr/listDivider" />
 
+</LinearLayout>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:defaultNavHost="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearlayoutFotoReceta"
         app:navGraph="@navigation/mobile_navigation" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
