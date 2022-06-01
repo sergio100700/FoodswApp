@@ -223,10 +223,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void introducirUserName(String email){
-        HashMap<String,String> user = new HashMap<>();
+        HashMap<String,Object> user = new HashMap<>();
+        HashMap<String,String> username = new HashMap<>();
 
             user.put("username", generarUsername());
-            firestore.collection("usernames").document(user.get("username")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            username.put("username",(String) user.get("username"));
+            user.put("seguidores", 0);
+            user.put("seguidos", 0);
+            firestore.collection("usernames").document((String)user.get("username")).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
@@ -235,7 +239,7 @@ public class LoginActivity extends AppCompatActivity {
                             introducirUserName(email);
                         } else {
                             firestore.collection("users").document(email).set(user);
-                            firestore.collection("usernames").document(user.get("username")).set(user);
+                            firestore.collection("usernames").document((String) user.get("username")).set(username);
                         }
 
                     } else {

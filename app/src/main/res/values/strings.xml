@@ -42,8 +42,10 @@
     <string name="editar">Editar</string>
     <string name="denunciar">Denunciar</string>
     <string name="compartir">Compartir</string>
+    <string name="seguir">Seguir</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="enviar">Enviar</string>
     <string name="hint_comentario">Añade un comentario aquí</string>
+    <string name="dejar_de_seguir">Dejar de seguir</string>
 </resources>

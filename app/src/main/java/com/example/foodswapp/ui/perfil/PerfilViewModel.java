@@ -11,12 +11,15 @@ import com.example.foodswapp.receta.comentarios.Comentario;
 import com.example.foodswapp.receta.Receta;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -29,28 +32,32 @@ public class PerfilViewModel extends ViewModel {
     private MutableLiveData<ArrayList<Receta>> recetas;
     private ArrayList<Receta> listaRecetas;
     private FirebaseFirestore firestore;
+    private String user;
+    private String emailCurrentProfile;
 
     public PerfilViewModel() {
         firestore = FirebaseFirestore.getInstance();
         username = new MutableLiveData<>();
         imgPerfil = new MutableLiveData<>();
         recetas = new MutableLiveData<>();
-        setUsername();
-        setImgPerfil();
-        populateList();
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+        getEmail();
     }
 
     private void setUsername() {
-        firestore.collection("users").document(HomeActivity.EMAIL).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        firestore.collection("users").document(emailCurrentProfile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                username.setValue(documentSnapshot.get("username").toString());
+                username.setValue((String) documentSnapshot.get("username"));
             }
         });
     }
 
     private void setImgPerfil() {
-        firestore.collection("users").document(HomeActivity.EMAIL).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        firestore.collection("users").document(emailCurrentProfile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.get("perfil") != null) {
@@ -62,10 +69,26 @@ public class PerfilViewModel extends ViewModel {
         });
     }
 
-    private void populateList() {
+    private void getEmail() {
+        CollectionReference users = firestore.collection("users");
+        users.whereIn("username", Collections.singletonList(user)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots.getDocuments().size() == 1) {
+                    emailCurrentProfile = queryDocumentSnapshots.getDocuments().get(0).getId();
+                    populateList();
+                    setUsername();
+                    setImgPerfil();
+                }
+            }
+        });
+    }
+
+    public void populateList() {
+
 
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        firestore.collection("users").document(emailCurrentProfile).collection("recetas").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 ArrayList<Receta> recetaLista = new ArrayList<>();
@@ -89,47 +112,47 @@ public class PerfilViewModel extends ViewModel {
                     Double media = Double.valueOf(String.valueOf(valoracionMedia));
 
                     List<Comentario> comentarios = new ArrayList<>();
-                    firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas")
+                    firestore.collection("users").document(emailCurrentProfile).collection("recetas")
                             .document(id).collection("comentarios").get()
                             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                                Timestamp time = (Timestamp) query.get("fecha");
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
+                                        Timestamp time = (Timestamp) query.get("fecha");
 
-                                comentarios.add(new Comentario((String)query.get("username"),(String) query.get("comentario"),time.toDate().toGMTString()));
-                            }
-                        }
-                    });
+                                        comentarios.add(new Comentario((String) query.get("username"), (String) query.get("comentario"), time.toDate().toGMTString()));
+                                    }
+                                }
+                            });
 
                     List<String> ingredientes = new ArrayList<>();
-                    firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas")
+                    firestore.collection("users").document(emailCurrentProfile).collection("recetas")
                             .document(id).collection("ingredientes").get()
                             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                     for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                                        ingredientes.add((String)query.get("nombre"));
+                                        ingredientes.add((String) query.get("nombre"));
                                     }
                                 }
                             });
 
-                    Map<Integer,String> pasosDesordenados = new HashMap<>();
-                    firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas")
+                    Map<Integer, String> pasosDesordenados = new HashMap<>();
+                    firestore.collection("users").document(emailCurrentProfile).collection("recetas")
                             .document(id).collection("pasos").get()
                             .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                     for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                                        pasosDesordenados.put((int) (long) query.get("numero"),(String) query.get("texto"));
+                                        pasosDesordenados.put((int) (long) query.get("numero"), (String) query.get("texto"));
                                     }
                                 }
                             });
                     List<String> pasos = new ArrayList<>();
-                    for(int i  = 1;i< pasosDesordenados.size();i++){
+                    for (int i = 1; i < pasosDesordenados.size(); i++) {
                         pasos.add(pasosDesordenados.get(i));
                     }
-                    recetaLista.add(new Receta(id,username,titulo, dif, tiempo, vegano, vegetariano, sinGluten, val,media,imagen,fecha,comentarios,ingredientes, pasos));
+                    recetaLista.add(new Receta(id, username, titulo, dif, tiempo, vegano, vegetariano, sinGluten, val, media, imagen, fecha, comentarios, ingredientes, pasos));
                 }
                 listaRecetas = recetaLista;
 
@@ -140,7 +163,9 @@ public class PerfilViewModel extends ViewModel {
             }
         });
 
+
     }
+
 
     public void refresh() {
         setUsername();

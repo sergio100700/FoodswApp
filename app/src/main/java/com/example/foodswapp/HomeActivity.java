@@ -26,9 +26,12 @@ import android.widget.Toast;
 
 import com.example.foodswapp.databinding.ActivityHomeBinding;
 import com.example.foodswapp.ui.perfil.PerfilFragment;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.prefs.Preferences;
 
@@ -39,6 +42,7 @@ public class HomeActivity extends AppCompatActivity {
         GOOGLE
     }
     public static String EMAIL;
+    public static String USERNAME;
     private ActivityHomeBinding binding;
     private SharedPreferences.Editor prefs;
 
@@ -54,6 +58,13 @@ public class HomeActivity extends AppCompatActivity {
 
         Toast.makeText(getApplicationContext(),email,Toast.LENGTH_LONG).show();
         HomeActivity.EMAIL = email;
+
+        FirebaseFirestore.getInstance().collection("users").document(email).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                USERNAME = (String) documentSnapshot.get("username");
+            }
+        });
 
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

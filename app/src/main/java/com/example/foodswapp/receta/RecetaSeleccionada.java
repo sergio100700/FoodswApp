@@ -44,6 +44,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
     private boolean isComentarios = false;
     private String username;
     private float valoracionNum;
+    private boolean isExterna;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +52,10 @@ public class RecetaSeleccionada extends AppCompatActivity {
         setContentView(R.layout.activity_receta_seleccionada);
 
         this.receta = (Receta) getIntent().getSerializableExtra("receta");
+        this.username = (String) getIntent().getExtras().getString("user");
+        isExterna= !HomeActivity.USERNAME.equals(username);
         firestore = FirebaseFirestore.getInstance();
-        firestore.collection("users").document(HomeActivity.EMAIL).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                username = (String) documentSnapshot.get("username");
-            }
-        });
+
         imageView = findViewById(R.id.imagenRS);
         textViewTitulo = findViewById(R.id.textViewTituloRS);
         ratingBar = findViewById(R.id.ratingBar);
@@ -107,7 +105,8 @@ public class RecetaSeleccionada extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.receta_seleccionada_menu, menu);
-        menu.findItem(R.id.action_inform).setVisible(false);
+        menu.findItem(R.id.action_inform).setVisible(isExterna);
+        menu.findItem(R.id.action_edit).setVisible(!isExterna);
         return super.onCreateOptionsMenu(menu);
     }
 

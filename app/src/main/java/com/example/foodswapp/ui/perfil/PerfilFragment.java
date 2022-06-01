@@ -10,11 +10,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.lifecycle.Observer;
 import androidx.annotation.NonNull;
@@ -34,17 +40,24 @@ import com.example.foodswapp.receta.AdapterReceta;
 import com.example.foodswapp.receta.Receta;
 import com.example.foodswapp.receta.RecetaSeleccionada;
 import com.example.foodswapp.ui.home.HomeViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -59,7 +72,20 @@ public class PerfilFragment extends Fragment {
     private SwipeRefreshLayout swipe;
     private AdapterReceta adapterReceta;
     public static Context context;
+    private boolean esPerfilPropio;
+    private ToggleButton btnSeguir;
+    private String currentUsername;
+    private String usernameExterno;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            usernameExterno = getArguments().getString("username");
+        }
+
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -68,11 +94,19 @@ public class PerfilFragment extends Fragment {
         perfilViewModel =
                 new ViewModelProvider(this).get(PerfilViewModel.class);
 
+        if(usernameExterno!=null){
+            perfilViewModel.setUser(usernameExterno);
+        } else {
+            getCurrentUsername();
+        }
+
+
         binding = FragmentPerfilBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         context = root.getContext();
 
         swipe = root.findViewById(R.id.fragment_perfil);
+        btnSeguir = binding.buttonSeguir;
 
         //Adaptador y montaje RecyclerView
         adapterReceta = new AdapterReceta();
@@ -82,16 +116,15 @@ public class PerfilFragment extends Fragment {
 
 
         //Bindings campos de usuario
-        final TextView userName = binding.textViewUserName;
+        final TextView tvUserName = binding.textViewUserName;
         perfilViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                userName.setText(s);
+                tvUserName.setText(s);
             }
         });
 
         final CircleImageView imagenPerfil = binding.imageViewPerfil;
-        onClickListenerImagen(imagenPerfil);
         perfilViewModel.getImagen().observe(getViewLifecycleOwner(), new Observer<Uri>() {
             @Override
             public void onChanged(Uri uri) {
@@ -108,8 +141,30 @@ public class PerfilFragment extends Fragment {
             }
         });
 
+
+
         listenerAdapter(contenedor);
         refreshListener(root);
+
+        firestore.collection("users").document(HomeActivity.EMAIL).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String username = (String) documentSnapshot.get("username");
+                if(username.equals(usernameExterno)){ //Si se cumple el usuario es él mismo
+                    esPerfilPropio = true;
+                    btnSeguir.setVisibility(View.INVISIBLE);
+                    onClickListenerImagen(imagenPerfil);
+                } else {
+                    esPerfilPropio = false;
+                    btnSeguir.setVisibility(View.VISIBLE);
+
+                    onClickSeguir(tvUserName.getText().toString());
+                    siguiendo();
+                }
+            }
+        });
+
+
 
         return root;
     }
@@ -135,6 +190,11 @@ public class PerfilFragment extends Fragment {
 
                 Intent intent = new Intent(getContext(), RecetaSeleccionada.class);
                 intent.putExtra("receta", receta);
+                if(!esPerfilPropio) {
+                    intent.putExtra("user", usernameExterno);
+                } else {
+                    intent.putExtra("user", currentUsername);
+                }
                 startActivityForResult(intent,SELECCION_PROPIETARIO);
             }
         });
@@ -154,6 +214,49 @@ public class PerfilFragment extends Fragment {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 intent.setType("image/");
                 startActivityForResult(intent, GALLERY_INTENT);
+            }
+        });
+    }
+
+    private void onClickSeguir(String username){
+        btnSeguir.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    if(isChecked){ //Dejar de seguir
+
+                    } else { //Seguir
+                        Map<String,String> user = new HashMap<>();
+                        user.put("username",username);
+                        firestore.collection("users").document(HomeActivity.EMAIL).collection("siguiendo").add(user);
+                    }
+
+            }
+        });
+    }
+
+
+    private void getCurrentUsername(){
+
+        firestore.collection("users").document(HomeActivity.EMAIL).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                currentUsername = (String) documentSnapshot.get("username");
+                perfilViewModel.setUser(currentUsername);
+                usernameExterno = currentUsername;
+            }
+        });
+    }
+
+    private void siguiendo(){
+        firestore.collection("users").document(HomeActivity.EMAIL).collection("siguiendo")
+                .whereIn("user", Collections.singletonList(usernameExterno)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if(queryDocumentSnapshots.size()>0){
+                    btnSeguir.setChecked(true);
+                } else {
+                    btnSeguir.setChecked(false);
+                }
             }
         });
     }
