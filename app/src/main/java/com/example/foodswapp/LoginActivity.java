@@ -49,6 +49,12 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        setTheme(R.style.SplashScreen);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 

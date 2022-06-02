@@ -53,9 +53,9 @@ public class BusquedaFragment extends Fragment {
     private ListView lvBusqueda,lvIngredientes;
     private ArrayAdapter<String> adapter,adapterIngredientes;
     private List<String> listaBusqueda,listaIngredientes,idRecetasBuscadas,idUsuarioReceta;
+    private List<Receta> listaRecetas;
     private ConstraintLayout busquedaRecetasLayout;
     private ImageButton btnVolver;
-    private TextView tvNotFound;
     private CheckBox vegetariano, vegano, sinGluten;
     private EditText etIngrediente;
     private boolean esUsuario;
@@ -71,11 +71,11 @@ public class BusquedaFragment extends Fragment {
         firestore = FirebaseFirestore.getInstance();
 
         busquedaRecetasLayout = binding.busquedaRecetasLayout;
-        tvNotFound = binding.tvNotFound;
         listaBusqueda = new ArrayList<>();
         listaIngredientes = new ArrayList<>();
         idRecetasBuscadas = new ArrayList<>();
         idUsuarioReceta = new ArrayList<>();
+        listaRecetas = new ArrayList<>();
 
         vegetariano = binding.cbVegetariano;
         vegano = binding.cbVegano;
@@ -157,36 +157,41 @@ public class BusquedaFragment extends Fragment {
     private void buscarReceta(String titulo) {
         idRecetasBuscadas.clear();
         idUsuarioReceta.clear();
+        listaRecetas.clear();
         firestore.collection("users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                    String emailCurrentReceta = doc.getId();
                     doc.getReference().collection("recetas")
                             .orderBy("titulo").startAt(titulo).endAt(titulo + '\uf8ff').get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                                if (!((String) doc.get("username")).equals(HomeActivity.USERNAME)
-                                        && doc.get("vegano").equals(vegano.isChecked())
-                                        && doc.get("vegetariano").equals(vegetariano.isChecked())
-                                        && doc.get("sinGluten").equals(sinGluten.isChecked())) {
-                                    if(listaIngredientes.size()>0){
-                                        doc.getReference().collection("ingredientes").whereArrayContainsAny("nombre",listaIngredientes).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            for (DocumentSnapshot docReceta : queryDocumentSnapshots) {
+                                if (!((String) docReceta.get("username")).equals(HomeActivity.USERNAME)
+                                        && docReceta.get("vegano").equals(vegano.isChecked())
+                                        && docReceta.get("vegetariano").equals(vegetariano.isChecked())
+                                        && docReceta.get("sinGluten").equals(sinGluten.isChecked())) {
+                                    String tituloR = (String) docReceta.get("titulo");
+                                    String usernameR = (String) docReceta.get("username");
+                                    if (listaIngredientes.size() > 0) {
+                                        docReceta.getReference().collection("ingredientes").whereIn("nombre",listaIngredientes).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                             @Override
                                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                listaBusqueda.add((String) doc.get("titulo"));
-                                                idUsuarioReceta.add((String) doc.get("username"));
-                                                idRecetasBuscadas.add(doc.getId());
+                                                listaBusqueda.add(tituloR);
+                                                idUsuarioReceta.add(usernameR);
+                                                idRecetasBuscadas.add(docReceta.getId());
+                                                queryReceta(docReceta,emailCurrentReceta);
                                             }
                                         });
                                     } else {
-                                        listaBusqueda.add((String) doc.get("titulo"));
-                                        idUsuarioReceta.add((String) doc.get("username"));
-                                        idRecetasBuscadas.add(doc.getId());
+                                        listaBusqueda.add((String) docReceta.get("titulo"));
+                                        idUsuarioReceta.add((String) docReceta.get("username"));
+                                        idRecetasBuscadas.add(docReceta.getId());
+                                        queryReceta(docReceta,emailCurrentReceta);
                                     }
                                 }
                             }
-                            adapter.notifyDataSetChanged();
                         }
                     });
                 }
@@ -194,6 +199,70 @@ public class BusquedaFragment extends Fragment {
         });
 
 
+    }
+
+    private void queryReceta(DocumentSnapshot docReceta,String emailCurrentReceta){
+        String id = docReceta.getId();
+        //Timestamp fecha = (Timestamp) query.get("fecha"); igual lo tengo que implementar para mostrar por fecha
+        String username = (String) docReceta.get("username");
+        String titulo = (String) docReceta.get("titulo");
+        String tiempo = (String) docReceta.get("tiempo");
+        Number dificultad = (Number) docReceta.get("dificultad");
+        Boolean vegano = docReceta.getBoolean("vegano");
+        Boolean vegetariano = docReceta.getBoolean("vegetariano");
+        Boolean sinGluten = docReceta.getBoolean("sinGluten");
+        String imagen = (String) docReceta.get("imagen");
+        Number valoraciones = (Number) docReceta.get("valoraciones");
+        Number valoracionMedia = (Number) docReceta.get("valoracionMedia");
+        Timestamp fecha = (Timestamp) docReceta.get("fecha");
+
+        Integer dif = Integer.valueOf(String.valueOf(dificultad));
+        Integer val = Integer.valueOf(String.valueOf(valoraciones));
+        Double media = Double.valueOf(String.valueOf(valoracionMedia));
+
+        List<Comentario> comentarios = new ArrayList<>();
+        firestore.collection("users").document(emailCurrentReceta).collection("recetas")
+                .document(id).collection("comentarios").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
+                            Timestamp time = (Timestamp) query.get("fecha");
+
+                            comentarios.add(new Comentario((String) query.getId(),(String) query.get("username"), (String) query.get("comentario"), time.toDate().toGMTString()));
+                        }
+                    }
+                });
+
+        List<String> ingredientes = new ArrayList<>();
+        firestore.collection("users").document(emailCurrentReceta).collection("recetas")
+                .document(id).collection("ingredientes").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
+                            ingredientes.add((String) query.get("nombre"));
+                        }
+                    }
+                });
+
+        Map<Integer, String> pasosDesordenados = new HashMap<>();
+        firestore.collection("users").document(emailCurrentReceta).collection("recetas")
+                .document(id).collection("pasos").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
+                            pasosDesordenados.put((int) (long) query.get("numero"), (String) query.get("texto"));
+                        }
+                    }
+                });
+        List<String> pasos = new ArrayList<>();
+        for (int i = 1; i < pasosDesordenados.size(); i++) {
+            pasos.add(pasosDesordenados.get(i));
+        }
+        listaRecetas.add(new Receta(id, username, titulo, dif, tiempo, vegano, vegetariano, sinGluten, val, media, imagen, fecha, comentarios, ingredientes, pasos));
+        adapter.notifyDataSetChanged();
     }
 
     private void addIngredienteListener(){
@@ -228,10 +297,10 @@ public class BusquedaFragment extends Fragment {
                 lvBusqueda.setVisibility(View.INVISIBLE);
                 busquedaRecetasLayout.setVisibility(View.VISIBLE);
                 btnVolver.setVisibility(View.INVISIBLE);
-                tvNotFound.setVisibility(View.INVISIBLE);
                 listaBusqueda.clear();
                 idRecetasBuscadas.clear();
                 idUsuarioReceta.clear();
+                listaRecetas.clear();
             }
         });
     }
@@ -246,89 +315,13 @@ public class BusquedaFragment extends Fragment {
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(getContext(), RecetaSeleccionada.class);
-
-                    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-                    firestore.collection("users").whereIn("username", Collections.singletonList(idUsuarioReceta.get(i))).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-
-                            for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                                String emailCurrentProfile = query.getId();
-
-                                query.getReference().collection("recetas").document(idRecetasBuscadas.get(i)).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        String id = documentSnapshot.getId();
-                                        //Timestamp fecha = (Timestamp) query.get("fecha"); igual lo tengo que implementar para mostrar por fecha
-                                        String username = (String) documentSnapshot.get("username");
-                                        String titulo = (String) documentSnapshot.get("titulo");
-                                        String tiempo = (String) documentSnapshot.get("tiempo");
-                                        Number dificultad = (Number) documentSnapshot.get("dificultad");
-                                        Boolean vegano = documentSnapshot.getBoolean("vegano");
-                                        Boolean vegetariano = documentSnapshot.getBoolean("vegetariano");
-                                        Boolean sinGluten = documentSnapshot.getBoolean("sinGluten");
-                                        String imagen = (String) documentSnapshot.get("imagen");
-                                        Number valoraciones = (Number) documentSnapshot.get("valoraciones");
-                                        Number valoracionMedia = (Number) documentSnapshot.get("valoracionMedia");
-                                        Timestamp fecha = (Timestamp) documentSnapshot.get("fecha");
-
-                                        Integer dif = Integer.valueOf(String.valueOf(dificultad));
-                                        Integer val = Integer.valueOf(String.valueOf(valoraciones));
-                                        Double media = Double.valueOf(String.valueOf(valoracionMedia));
-
-                                        List<Comentario> comentarios = new ArrayList<>();
-                                        firestore.collection("users").document(emailCurrentProfile).collection("recetas")
-                                                .document(id).collection("comentarios").get()
-                                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                        for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                                                            Timestamp time = (Timestamp) query.get("fecha");
-
-                                                            comentarios.add(new Comentario((String) query.get("username"), (String) query.get("comentario"), time.toDate().toGMTString()));
-                                                        }
-                                                    }
-                                                });
-
-                                        List<String> ingredientes = new ArrayList<>();
-                                        firestore.collection("users").document(emailCurrentProfile).collection("recetas")
-                                                .document(id).collection("ingredientes").get()
-                                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                        for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                                                            ingredientes.add((String) query.get("nombre"));
-                                                        }
-                                                    }
-                                                });
-
-                                        Map<Integer, String> pasosDesordenados = new HashMap<>();
-                                        firestore.collection("users").document(emailCurrentProfile).collection("recetas")
-                                                .document(id).collection("pasos").get()
-                                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                                        for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                                                            pasosDesordenados.put((int) (long) query.get("numero"), (String) query.get("texto"));
-                                                        }
-                                                    }
-                                                });
-                                        List<String> pasos = new ArrayList<>();
-                                        for (int i = 1; i < pasosDesordenados.size(); i++) {
-                                            pasos.add(pasosDesordenados.get(i));
-                                        }
-
-
-                                        intent.putExtra("receta", (Receta) new Receta(id, username, titulo, dif, tiempo, vegano, vegetariano, sinGluten, val, media, imagen, fecha, comentarios, ingredientes, pasos));
-                                        intent.putExtra("user", (String) adapterView.getItemAtPosition(i));
-                                        startActivity(intent);
-                                    }
-                                });
-                            }
-                        }
-                    });
+                    intent.putExtra("receta",listaRecetas.get(i));
+                    intent.putExtra("user", (String) adapterView.getItemAtPosition(i));
+                    startActivity(intent);
                 }
             }
+
+
         });
     }
 
@@ -337,11 +330,6 @@ public class BusquedaFragment extends Fragment {
         lvBusqueda.setVisibility(View.VISIBLE);
         busquedaRecetasLayout.setVisibility(View.INVISIBLE);
         btnVolver.setVisibility(View.VISIBLE);
-        if (listaBusqueda.size() > 0) {
-            tvNotFound.setVisibility(View.INVISIBLE);
-        } else {
-            tvNotFound.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override

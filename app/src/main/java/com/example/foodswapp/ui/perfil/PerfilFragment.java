@@ -158,7 +158,7 @@ public class PerfilFragment extends Fragment {
                     esPerfilPropio = false;
                     btnSeguir.setVisibility(View.VISIBLE);
 
-                    onClickSeguir(tvUserName.getText().toString());
+                    onClickSeguir();
                     siguiendo();
                 }
             }
@@ -218,12 +218,21 @@ public class PerfilFragment extends Fragment {
         });
     }
 
-    private void onClickSeguir(String username){
+    private void onClickSeguir(){
         btnSeguir.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    if(isChecked){ //Dejar de seguir
-
+                String username = usernameExterno;
+                    if(!isChecked){ //Dejar de seguir
+                        firestore.collection("users").document(HomeActivity.EMAIL).collection("siguiendo")
+                                .whereIn("username", Collections.singletonList(username)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                if(queryDocumentSnapshots.getDocuments().size()>0){
+                                    queryDocumentSnapshots.getDocuments().get(0).getReference().delete();
+                                }
+                            }
+                        });
                     } else { //Seguir
                         Map<String,String> user = new HashMap<>();
                         user.put("username",username);
@@ -249,14 +258,10 @@ public class PerfilFragment extends Fragment {
 
     private void siguiendo(){
         firestore.collection("users").document(HomeActivity.EMAIL).collection("siguiendo")
-                .whereIn("user", Collections.singletonList(usernameExterno)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .whereIn("username", Collections.singletonList(usernameExterno)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if(queryDocumentSnapshots.size()>0){
-                    btnSeguir.setChecked(true);
-                } else {
-                    btnSeguir.setChecked(false);
-                }
+                btnSeguir.setChecked(queryDocumentSnapshots.size() > 0);
             }
         });
     }

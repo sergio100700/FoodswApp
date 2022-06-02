@@ -3,12 +3,17 @@ package com.example.foodswapp.receta;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.foodswapp.HomeActivity;
 import com.example.foodswapp.R;
+import com.example.foodswapp.ingrediente.IngredienteLista;
 import com.example.foodswapp.receta.comentarios.ComentariosFragment;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
@@ -53,7 +59,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
 
         this.receta = (Receta) getIntent().getSerializableExtra("receta");
         this.username = (String) getIntent().getExtras().getString("user");
-        isExterna= !HomeActivity.USERNAME.equals(username);
+        isExterna = !HomeActivity.USERNAME.equals(username);
         firestore = FirebaseFirestore.getInstance();
 
         imageView = findViewById(R.id.imagenRS);
@@ -88,7 +94,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            if (doc.getId().equals(username)) {
+                            if (doc.getId().equals(HomeActivity.USERNAME)) {
                                 Number num = (Number) doc.get("valor");
                                 ratingBar.setRating(Float.parseFloat(String.valueOf(num)));
                                 valoracionNum = ratingBar.getRating();
@@ -110,20 +116,46 @@ public class RecetaSeleccionada extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
-                action(R.string.editar);
+                //editar
                 return true;
             case R.id.action_share:
-                action(R.string.compartir);
+                //Compartir
                 return true;
             case R.id.action_inform:
-                action(R.string.denunciar);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(getString(R.string.pregunta_denuncia))
+
+                        .setPositiveButton(R.string.denunciar, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                //Introduzco en bd
+                                Map<String, Object> reporte = new HashMap<>();
+                                reporte.put("username", receta.getUsername());
+                                reporte.put("idReceta", receta.getId());
+                                reporte.put("fecha", Timestamp.now());
+                                firestore.collection("reports").add(reporte);
+
+                                dialog.dismiss();
+                                Toast.makeText(getApplicationContext(), getString(R.string.gracias_denunciar), Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancelar, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                builder.create().show();
+
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
+
+            default:return true;
         }
     }
 
@@ -137,6 +169,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
                     isComentarios = true;
                 } else {
                     isComentarios = false;
+                    //Ingredientes y pasos
                 }
             }
         });
@@ -170,7 +203,6 @@ public class RecetaSeleccionada extends AppCompatActivity {
                                 if (valoracionNum > 0) {
                                     media = (media * val) - valoracionNum;
                                     val--;
-
                                 }
 
                                 val++;
@@ -179,13 +211,13 @@ public class RecetaSeleccionada extends AppCompatActivity {
                                 media += v;
                                 media /= val;
 
-                                ratingBarNew.setRating((float) media);
-                                docUsuario.getReference().collection("recetas").document(receta.getId()).collection("valoraciones").document(username).update("valor", v);
+                                ratingBarNew.setRating((float) v);
+                                docUsuario.getReference().collection("recetas").document(receta.getId()).collection("valoraciones").document(HomeActivity.USERNAME).update("valor", v);
                                 docUsuario.getReference().collection("recetas").document(receta.getId()).update("valoracionMedia", media);
                                 valoracionMedia.setText(String.valueOf(media));
                                 valoracionNum = v;
 
-                                docUsuario.getReference().collection("recetas").document(receta.getId()).collection("valoraciones").document(username).set(valoracion, SetOptions.merge());
+                                docUsuario.getReference().collection("recetas").document(receta.getId()).collection("valoraciones").document(HomeActivity.USERNAME).set(valoracion, SetOptions.merge());
 
 
                             }
@@ -197,9 +229,6 @@ public class RecetaSeleccionada extends AppCompatActivity {
         });
     }
 
-    private void action(int resid) {
-        Toast.makeText(this, getText(resid), Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void onBackPressed() {

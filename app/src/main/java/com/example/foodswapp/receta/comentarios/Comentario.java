@@ -7,11 +7,19 @@ import java.io.Serializable;
 public class Comentario implements Serializable {
 
     private static final long serialVersionUID = 44L;
+    private String idComentario;
     private String userName;
     private String texto;
     private String fecha;
 
     public Comentario(String userName, String texto, String fecha) {
+        this.userName = userName;
+        this.texto = texto;
+        this.fecha = fecha;
+    }
+
+    public Comentario(String idComentario, String userName, String texto, String fecha) {
+        this.idComentario = idComentario;
         this.userName = userName;
         this.texto = texto;
         this.fecha = fecha;
@@ -39,5 +47,13 @@ public class Comentario implements Serializable {
 
     public void setFecha(String fecha) {
         this.fecha = fecha;
+    }
+
+    public String getIdComentario() {
+        return idComentario;
+    }
+
+    public void setIdComentario(String idComentario) {
+        this.idComentario = idComentario;
     }
 }

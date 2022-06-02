@@ -48,4 +48,9 @@
     <string name="enviar">Enviar</string>
     <string name="hint_comentario">Añade un comentario aquí</string>
     <string name="dejar_de_seguir">Dejar de seguir</string>
+    <string name="gracias_denunciar">Gracias por informar. La publicación será revisada.</string>
+    <string name="pregunta_denuncia">¿Seguro que quieres denunciar esta publicación?</string>
+    <string name="eliminar_comentario">¿Eliminar comentario?</string>
+    <string name="comentario_eliminado">Comentario eliminado</string>
+    <string name="eliminar">Eliminar</string>
 </resources>

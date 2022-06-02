@@ -76,8 +76,11 @@ public class AdapterComentarios extends BaseAdapter {
 
                 for(DocumentSnapshot doc:queryDocumentSnapshots){
                     if(((String) doc.get("username")).equals(comentario.getUserName())) {
-                        Uri uri = Uri.parse(doc.get("perfil").toString());
-                        Glide.with(context).load(uri).into(imagen);
+                        if(doc.get("perfil") != null){
+                            Uri uri = Uri.parse(doc.get("perfil").toString());
+                            Glide.with(context).load(uri).into(imagen);
+                        }
+
                         break;
                     }
                 }

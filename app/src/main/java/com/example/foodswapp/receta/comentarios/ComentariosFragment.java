@@ -1,5 +1,7 @@
 package com.example.foodswapp.receta.comentarios;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -10,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -30,6 +33,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +84,7 @@ public class ComentariosFragment extends Fragment {
                 comentariosListView.setAdapter(adapter);
             }
         });
+        onComentarioLongClick(comentariosListView);
 
 
         return root;
@@ -97,6 +102,49 @@ public class ComentariosFragment extends Fragment {
                         updateRecetaComentarios(comentario);
                     }
                 });
+            }
+        });
+    }
+
+    private void onComentarioLongClick(ListView listViewComentarios){
+        listViewComentarios.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Comentario comentario = (Comentario) adapterView.getItemAtPosition(i);
+                if(comentario.getUserName().equals(HomeActivity.USERNAME)){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage(getString(R.string.eliminar_comentario))
+
+                            .setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+
+                                    //Introduzco en bd
+                                    firestore.collection("users").whereIn("username", Collections.singletonList(receta.getUsername())).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                            queryDocumentSnapshots.getDocuments().get(0).getReference().collection("recetas").document(receta.getId())
+                                                    .collection("comentarios").document(comentario.getIdComentario()).delete();
+                                            receta.getComentarios().remove(i);
+                                            adapter.updateComentarios(receta.getComentarios());
+                                            adapter.notifyDataSetChanged();
+
+                                        }
+                                    });
+                                    dialog.dismiss();
+                                    Toast.makeText(getContext(), getString(R.string.comentario_eliminado), Toast.LENGTH_LONG).show();
+                                }
+                            })
+                            .setNegativeButton(R.string.cancelar, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                    builder.create().show();
+
+                }
+
+                return false;
             }
         });
     }
@@ -128,7 +176,7 @@ public class ComentariosFragment extends Fragment {
                                 receta.getComentarios().clear();
                                 for(DocumentSnapshot comentario : queryDocumentSnapshots){
                                     Timestamp time = (Timestamp) comentario.get("fecha");
-                                    receta.getComentarios().add(new Comentario((String)comentario.get("username"),(String) comentario.get("comentario"),time.toDate().toGMTString()));
+                                    receta.getComentarios().add(new Comentario((String)comentario.getId(),(String)comentario.get("username"),(String) comentario.get("comentario"),time.toDate().toGMTString()));
                                 }
                                 adapter.updateComentarios(receta.getComentarios());
                                 adapter.notifyDataSetChanged();
