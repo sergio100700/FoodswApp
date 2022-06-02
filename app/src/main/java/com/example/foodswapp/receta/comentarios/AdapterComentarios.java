@@ -63,11 +63,13 @@ public class AdapterComentarios extends BaseAdapter {
         view = LayoutInflater.from(context).inflate(R.layout.comentario, null);
 
         TextView texto = view.findViewById(R.id.textViewComentario);
+        TextView username = view.findViewById(R.id.textViewUserNameC);
         TextView fecha = view.findViewById(R.id.textViewFechaC);
         CircleImageView imagen = view.findViewById(R.id.imagenUsuarioC);
 
         fecha.setText(comentario.getFecha().replace(" GMT",""));
         texto.setText(comentario.getTexto());
+        username.setText(comentario.getUserName());
 
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         firestore.collection("users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
