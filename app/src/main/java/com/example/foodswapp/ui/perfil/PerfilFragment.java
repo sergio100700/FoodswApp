@@ -109,7 +109,7 @@ public class PerfilFragment extends Fragment {
         btnSeguir = binding.buttonSeguir;
 
         //Adaptador y montaje RecyclerView
-        adapterReceta = new AdapterReceta();
+        adapterReceta = new AdapterReceta(getContext(),R.layout.cardview_receta,false);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(root.getContext(), 3);
         RecyclerView recyclerView = root.findViewById(R.id.recyclerViewPerfil);
         recyclerView.setLayoutManager(layoutManager);
@@ -121,6 +121,22 @@ public class PerfilFragment extends Fragment {
             @Override
             public void onChanged(@Nullable String s) {
                 tvUserName.setText(s);
+            }
+        });
+
+        final TextView tvSeguidores = binding.textViewNumSeguidores;
+        perfilViewModel.getNumSeguidores().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                tvSeguidores.setText(s);
+            }
+        });
+
+        final TextView tvSeguidos = binding.textViewNumSeguidos;
+        perfilViewModel.getNumSeguidos().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                tvSeguidos.setText(s);
             }
         });
 
@@ -233,10 +249,30 @@ public class PerfilFragment extends Fragment {
                                 }
                             }
                         });
+                        firestore.collection("users").whereIn("username", Collections.singletonList(usernameExterno)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                queryDocumentSnapshots.getDocuments().get(0).getReference().collection("seguidores")
+                                        .whereIn("username", Collections.singletonList(HomeActivity.USERNAME)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                        queryDocumentSnapshots.getDocuments().get(0).getReference().delete();
+                                    }
+                                });
+                            }
+                        });
                     } else { //Seguir
                         Map<String,String> user = new HashMap<>();
                         user.put("username",username);
                         firestore.collection("users").document(HomeActivity.EMAIL).collection("siguiendo").add(user);
+                        Map<String,String> esteUser = new HashMap<>();
+                        esteUser.put("username",HomeActivity.USERNAME);
+                        firestore.collection("users").whereIn("username", Collections.singletonList(usernameExterno)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                queryDocumentSnapshots.getDocuments().get(0).getReference().collection("seguidores").add(esteUser);
+                            }
+                        });
                     }
 
             }

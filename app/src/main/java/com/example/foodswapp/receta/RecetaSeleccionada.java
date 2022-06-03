@@ -6,17 +6,15 @@ import androidx.fragment.app.Fragment;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,8 +22,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.foodswapp.HomeActivity;
 import com.example.foodswapp.R;
-import com.example.foodswapp.ingrediente.IngredienteLista;
 import com.example.foodswapp.receta.comentarios.ComentariosFragment;
+import com.example.foodswapp.receta.visualizar.IngredientesPasosActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
@@ -35,7 +33,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,8 +43,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
     private ImageView imageView;
     private TextView textViewTitulo, valoracionMedia;
     private RatingBar ratingBar;
-    private ImageButton comentarios;
-    private boolean isComentarios = false;
+    private ImageButton pasos;
     private String username;
     private float valoracionNum;
     private boolean isExterna;
@@ -65,12 +61,15 @@ public class RecetaSeleccionada extends AppCompatActivity {
         imageView = findViewById(R.id.imagenRS);
         textViewTitulo = findViewById(R.id.textViewTituloRS);
         ratingBar = findViewById(R.id.ratingBar);
-        comentarios = findViewById(R.id.imageButtonComentarios);
-        onClickComentarios();
+
+        pasos = findViewById(R.id.imageButtonPasos);
+        onClickPasos();
         valoracionMedia = findViewById(R.id.textViewValoracionMedia);
         rellenarCampos();
         setListenerRatingBar();
 
+        Fragment fragmentComentarios = new ComentariosFragment(receta);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, fragmentComentarios).commit();
 
     }
 
@@ -159,18 +158,13 @@ public class RecetaSeleccionada extends AppCompatActivity {
         }
     }
 
-    private void onClickComentarios() {
-        comentarios.setOnClickListener(new View.OnClickListener() {
+    private void onClickPasos() {
+        pasos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isComentarios) {
-                    Fragment fragmentComentarios = new ComentariosFragment(receta);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, fragmentComentarios).commit();
-                    isComentarios = true;
-                } else {
-                    isComentarios = false;
-                    //Ingredientes y pasos
-                }
+                Intent intent = new Intent(getApplicationContext(), IngredientesPasosActivity.class);
+                intent.putExtra("receta",receta);
+                startActivity(intent);
             }
         });
     }

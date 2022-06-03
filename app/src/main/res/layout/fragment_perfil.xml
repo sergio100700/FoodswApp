@@ -73,7 +73,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/imageViewPerfil" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/textViewNumSeguidores"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
@@ -83,7 +83,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
                 <TextView
-                    android:id="@+id/textView9"
+                    android:id="@+id/textViewNumSeguidos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"

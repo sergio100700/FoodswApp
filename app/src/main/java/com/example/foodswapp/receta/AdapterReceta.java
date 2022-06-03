@@ -27,10 +27,14 @@ public class AdapterReceta extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private ArrayList<Receta> recetas = new ArrayList<Receta>();;
     private View.OnClickListener listener;
-    private final Context context = PerfilFragment.context;
+    private Context context;
+    private int layout;
+    private boolean isHomeFragment;
 
-    public AdapterReceta() {
-
+    public AdapterReceta(Context context,int layout,boolean isHomeFragment) {
+        this.context = context;
+        this.layout = layout;
+        this.isHomeFragment = isHomeFragment;
     }
 
     @NonNull
@@ -40,7 +44,7 @@ public class AdapterReceta extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
         LayoutInflater mInflater = (LayoutInflater) viewGroup.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = mInflater.inflate(R.layout.cardview_receta, viewGroup, false);
+        View v = mInflater.inflate(layout, viewGroup, false);
         RecyclerView.ViewHolder viewHolder = new ViewHolderReceta(v);
         v.setOnClickListener(this);
 
@@ -60,7 +64,10 @@ public class AdapterReceta extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else {
             Glide.with(context).load(Uri.parse(receta.getImagen())).into(viewHolderReceta.itemImaxe);
         }
-
+        if(isHomeFragment){
+            viewHolderReceta.username.setVisibility(View.VISIBLE);
+            viewHolderReceta.username.setText(receta.getUsername());
+        }
         viewHolderReceta.titulo.setText(receta.getTitulo());
         viewHolderReceta.tiempo.setText(receta.getTiempo());
     }

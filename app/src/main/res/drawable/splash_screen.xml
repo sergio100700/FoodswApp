@@ -5,8 +5,6 @@
         <bitmap
             android:src="@drawable/logosm"
             android:gravity="center"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
             />
     </item>
 </layer-list>

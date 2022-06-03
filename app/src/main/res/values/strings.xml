@@ -53,4 +53,9 @@
     <string name="eliminar_comentario">¿Eliminar comentario?</string>
     <string name="comentario_eliminado">Comentario eliminado</string>
     <string name="eliminar">Eliminar</string>
+    <string name="err_tiempo">Tiempo obligatorio</string>
+    <string name="pasos">Pasos:</string>
+    <string name="vegano">Vegano</string>
+    <string name="vegetariano">Vegetariano</string>
+    <string name="sin_gluten">Sin Gluten</string>
 </resources>

@@ -14,10 +14,11 @@ public class ViewHolderReceta extends RecyclerView.ViewHolder {
     public ImageView itemImaxe;
     public TextView titulo;
     public TextView tiempo;
+    public TextView username;
 
     public ViewHolderReceta(@NonNull View itemView) {
         super(itemView);
-
+        username = itemView.findViewById(R.id.textViewUsernameHome);
         itemImaxe = itemView.findViewById(R.id.imagen);
         titulo = itemView.findViewById(R.id.textViewTitulo);
         tiempo = itemView.findViewById(R.id.textViewTiempo);

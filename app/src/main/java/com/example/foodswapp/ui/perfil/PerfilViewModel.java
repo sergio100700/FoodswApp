@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class PerfilViewModel extends ViewModel {
 
-    private MutableLiveData<String> username;
+    private MutableLiveData<String> username, numSeguidores, numSeguidos;
     private MutableLiveData<Uri> imgPerfil;
     private MutableLiveData<ArrayList<Receta>> recetas;
     private ArrayList<Receta> listaRecetas;
@@ -40,11 +40,41 @@ public class PerfilViewModel extends ViewModel {
         username = new MutableLiveData<>();
         imgPerfil = new MutableLiveData<>();
         recetas = new MutableLiveData<>();
+        numSeguidores = new MutableLiveData<>();
+        numSeguidos = new MutableLiveData<>();
     }
 
     public void setUser(String user) {
         this.user = user;
         getEmail();
+    }
+
+    private void setNumSeguidores() {
+        firestore.collection("users").document(emailCurrentProfile).collection("seguidores").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots.size() > 0) {
+                    numSeguidores.setValue(String.valueOf(queryDocumentSnapshots.size()));
+                } else {
+                    numSeguidores.setValue("0");
+                }
+
+            }
+        });
+    }
+
+    private void setNumSeguidos() {
+        firestore.collection("users").document(emailCurrentProfile).collection("siguiendo").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots.size() > 0) {
+                    numSeguidos.setValue(String.valueOf(queryDocumentSnapshots.size()));
+                } else {
+                    numSeguidos.setValue("0");
+                }
+
+            }
+        });
     }
 
     private void setUsername() {
@@ -79,6 +109,8 @@ public class PerfilViewModel extends ViewModel {
                     populateList();
                     setUsername();
                     setImgPerfil();
+                    setNumSeguidores();
+                    setNumSeguidos();
                 }
             }
         });
@@ -144,22 +176,27 @@ public class PerfilViewModel extends ViewModel {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                     for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
-                                        pasosDesordenados.put((int) (long) query.get("numero"), (String) query.get("texto"));
+                                        Number num = (Number) query.get("numero");
+                                        Integer numero =  Integer.valueOf(String.valueOf(num));
+                                        pasosDesordenados.put(numero, (String) query.get("texto"));
                                     }
+                                    List<String> pasos = new ArrayList<>();
+                                    for (int i = 1; i < pasosDesordenados.size()+1; i++) {
+                                        pasos.add(pasosDesordenados.get(i));
+                                    }
+                                    recetaLista.add(new Receta(id, username, titulo, dif, tiempo, vegano, vegetariano, sinGluten, val, media, imagen, fecha, comentarios, ingredientes, pasos));
+                                    listaRecetas = recetaLista;
+
+                                    //Odenar recetas del perfil por su fecha de publicación
+                                    listaRecetas.sort(Comparator.comparing(Receta::getFecha));
+
+                                    recetas.setValue(listaRecetas);
                                 }
                             });
-                    List<String> pasos = new ArrayList<>();
-                    for (int i = 1; i < pasosDesordenados.size(); i++) {
-                        pasos.add(pasosDesordenados.get(i));
-                    }
-                    recetaLista.add(new Receta(id, username, titulo, dif, tiempo, vegano, vegetariano, sinGluten, val, media, imagen, fecha, comentarios, ingredientes, pasos));
+
+
                 }
-                listaRecetas = recetaLista;
 
-                //Odenar recetas del perfil por su fecha de publicación
-                listaRecetas.sort(Comparator.comparing(Receta::getFecha));
-
-                recetas.setValue(listaRecetas);
             }
         });
 
@@ -170,11 +207,21 @@ public class PerfilViewModel extends ViewModel {
     public void refresh() {
         setUsername();
         setImgPerfil();
+        setNumSeguidores();
+        setNumSeguidos();
         populateList();
     }
 
     public LiveData<String> getText() {
         return username;
+    }
+
+    public LiveData<String> getNumSeguidores() {
+        return numSeguidores;
+    }
+
+    public LiveData<String> getNumSeguidos() {
+        return numSeguidos;
     }
 
     public LiveData<Uri> getImagen() {

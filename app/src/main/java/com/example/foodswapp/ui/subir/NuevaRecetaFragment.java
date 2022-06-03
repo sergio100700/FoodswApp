@@ -91,7 +91,10 @@ public class NuevaRecetaFragment  extends Fragment {
             public void onClick(View view) {
                 if(titulo.getText().length()<=0){
                     titulo.setError(getString(R.string.err_titulo_obligatorio));
-                } else {
+                } else if( etMinutos.getText().length()<=0){
+                    etMinutos.setError(getString(R.string.err_tiempo));
+                }else{
+                    if(etHoras.getText().length()<=0){etHoras.setText(0);}
                     Intent intent = new Intent(getContext(), NuevaRecetaCrear.class);
                     intent.putExtra("RECETA", new Receta(titulo.getText().toString(), dificultad.getProgress(),
                             etHoras.getText().toString().concat(getString(R.string.horas_y)).concat(etMinutos.getText().toString()).concat(getString(R.string.minutos)),
