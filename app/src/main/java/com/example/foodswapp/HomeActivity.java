@@ -25,11 +25,19 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.foodswapp.databinding.ActivityHomeBinding;
+import com.example.foodswapp.receta.RecetaSeleccionada;
 import com.example.foodswapp.ui.perfil.PerfilFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.dynamiclinks.DynamicLink;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
+import com.google.firebase.dynamiclinks.ShortDynamicLink;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -56,8 +64,9 @@ public class HomeActivity extends AppCompatActivity {
         String email = bundle.getString("email");
         String provider = bundle.getString("provider");
 
-        Toast.makeText(getApplicationContext(),email,Toast.LENGTH_LONG).show();
         HomeActivity.EMAIL = email;
+
+        tryToGetDynamicLink();
 
         FirebaseFirestore.getInstance().collection("users").document(email).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -121,5 +130,38 @@ public class HomeActivity extends AppCompatActivity {
         onBackPressed();
         startActivity(new Intent(this,LoginActivity.class));
     }
+
+    //Pruebas LINKS
+    public void tryToGetDynamicLink() {
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(getIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+                        // Get deep link from result (may be null if no link is found)
+                        Uri deepLink = null;
+                        if (pendingDynamicLinkData != null) {
+                            deepLink = pendingDynamicLinkData.getLink();
+                            if (deepLink.getQueryParameter("idReceta") != null && deepLink.getQueryParameter("username")!=null) {
+                                Intent intent = new Intent(getApplicationContext(), RecetaSeleccionada.class);
+                                intent.putExtra("user",deepLink.getQueryParameter("username"));
+                                intent.putExtra("recetaId",deepLink.getQueryParameter("idReceta"));
+                                startActivity(intent);
+                            }
+                        } else {
+                            Log.d("WALKIRIA", "ERROR WITH DYNAMIC LINK OR NO LINK AT ALL");
+                        }
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("WALKIRIA", "ERROR WITH DYNAMIC LINK " + e.toString());
+
+                    }
+                });
+    }
+
+
 
 }

@@ -5,9 +5,9 @@
     tools:context=".MainActivity">
 
     <item
-        android:id="@+id/action_edit"
-        android:icon="@mipmap/edit"
-        android:title="@string/editar"
+        android:id="@+id/action_remove"
+        android:icon="@mipmap/trash"
+        android:title="@string/eliminar"
         app:showAsAction="always" />
 
     <item

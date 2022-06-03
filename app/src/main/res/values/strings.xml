@@ -58,4 +58,6 @@
     <string name="vegano">Vegano</string>
     <string name="vegetariano">Vegetariano</string>
     <string name="sin_gluten">Sin Gluten</string>
+    <string name="publicacion_eliminada">Publicación eliminada</string>
+    <string name="eliminar_publicacion">¿Eliminar publicación permanentemente?</string>
 </resources>

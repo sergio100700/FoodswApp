@@ -34,6 +34,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +67,9 @@ public class ComentariosFragment extends Fragment {
         firestore = FirebaseFirestore.getInstance();
         binding = FragmentComentariosBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        receta.getComentarios().sort(Comparator.comparing(Comentario::getFecha).reversed());
         adapter = new AdapterComentarios(getContext(), receta.getComentarios());
+
         listViewComentarios = root.findViewById(R.id.listViewComentarios);
         listViewComentarios.setAdapter(adapter);
 
@@ -100,6 +103,7 @@ public class ComentariosFragment extends Fragment {
                         String username = (String) documentSnapshot.get("username");
                         Comentario comentario = new Comentario(username, mensaje.getText().toString(), Timestamp.now().toString());
                         updateRecetaComentarios(comentario);
+                        mensaje.setText("");
                     }
                 });
             }
@@ -178,6 +182,8 @@ public class ComentariosFragment extends Fragment {
                                     Timestamp time = (Timestamp) comentario.get("fecha");
                                     receta.getComentarios().add(new Comentario((String)comentario.getId(),(String)comentario.get("username"),(String) comentario.get("comentario"),time.toDate().toGMTString()));
                                 }
+
+                                receta.getComentarios().sort(Comparator.comparing(Comentario::getFecha).reversed());
                                 adapter.updateComentarios(receta.getComentarios());
                                 adapter.notifyDataSetChanged();
                             }

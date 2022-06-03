@@ -1,5 +1,6 @@
 package com.example.foodswapp.receta;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,18 +24,29 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.foodswapp.HomeActivity;
 import com.example.foodswapp.R;
+import com.example.foodswapp.receta.comentarios.Comentario;
 import com.example.foodswapp.receta.comentarios.ComentariosFragment;
 import com.example.foodswapp.receta.visualizar.IngredientesPasosActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.dynamiclinks.DynamicLink;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.ShortDynamicLink;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RecetaSeleccionada extends AppCompatActivity {
@@ -53,10 +66,20 @@ public class RecetaSeleccionada extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receta_seleccionada);
 
-        this.receta = (Receta) getIntent().getSerializableExtra("receta");
-        this.username = (String) getIntent().getExtras().getString("user");
-        isExterna = !HomeActivity.USERNAME.equals(username);
         firestore = FirebaseFirestore.getInstance();
+        this.username = (String) getIntent().getExtras().getString("user");
+        if(getIntent().getExtras().getString("recetaId")!=null){
+            cargarRecetaLink(getIntent().getExtras().getString("recetaId"));
+        } else {
+            this.receta = (Receta) getIntent().getSerializableExtra("receta");
+            init();
+        }
+
+
+    }
+
+    private void init(){
+        isExterna = !HomeActivity.USERNAME.equals(username);
 
         imageView = findViewById(R.id.imagenRS);
         textViewTitulo = findViewById(R.id.textViewTituloRS);
@@ -70,7 +93,6 @@ public class RecetaSeleccionada extends AppCompatActivity {
 
         Fragment fragmentComentarios = new ComentariosFragment(receta);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, fragmentComentarios).commit();
-
     }
 
     private void rellenarCampos() {
@@ -111,7 +133,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.receta_seleccionada_menu, menu);
         menu.findItem(R.id.action_inform).setVisible(isExterna);
-        menu.findItem(R.id.action_edit).setVisible(!isExterna);
+        menu.findItem(R.id.action_remove).setVisible(!isExterna);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -119,11 +141,30 @@ public class RecetaSeleccionada extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_edit:
-                //editar
+            case R.id.action_remove:
+                AlertDialog.Builder builderRM = new AlertDialog.Builder(this);
+                builderRM.setMessage(getString(R.string.eliminar_publicacion))
+
+                        .setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas").document(receta.getId()).delete();
+                                Toast.makeText(getApplicationContext(), getString(R.string.publicacion_eliminada), Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton(R.string.cancelar, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                builderRM.create().show();
+
                 return true;
             case R.id.action_share:
                 //Compartir
+                generateDynamicLink();
                 return true;
             case R.id.action_inform:
 
@@ -154,7 +195,8 @@ public class RecetaSeleccionada extends AppCompatActivity {
 
                 return true;
 
-            default:return true;
+            default:
+                return true;
         }
     }
 
@@ -163,7 +205,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), IngredientesPasosActivity.class);
-                intent.putExtra("receta",receta);
+                intent.putExtra("receta", receta);
                 startActivity(intent);
             }
         });
@@ -228,5 +270,142 @@ public class RecetaSeleccionada extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    private void cargarRecetaLink(String idReceta) {
+        firestore.collection("users").whereIn("username", Collections.singletonList(this.username)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryUsuariosSeguidos) {
+
+                for (DocumentSnapshot user : queryUsuariosSeguidos) {
+                    String emailCurrentProfile = user.getId();
+                    user.getReference().collection("recetas").document(idReceta).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                            if (documentSnapshot.exists()) {
+
+                                DocumentSnapshot query = documentSnapshot;
+
+                                String id = query.getId();
+                                String username = (String) query.get("username");
+                                String titulo = (String) query.get("titulo");
+                                String tiempo = (String) query.get("tiempo");
+                                Number dificultad = (Number) query.get("dificultad");
+                                Boolean vegano = query.getBoolean("vegano");
+                                Boolean vegetariano = query.getBoolean("vegetariano");
+                                Boolean sinGluten = query.getBoolean("sinGluten");
+                                String imagen = (String) query.get("imagen");
+                                Number valoraciones = (Number) query.get("valoraciones");
+                                Number valoracionMedia = (Number) query.get("valoracionMedia");
+                                Timestamp fecha = (Timestamp) query.get("fecha");
+
+                                Integer dif = Integer.valueOf(String.valueOf(dificultad));
+                                Integer val = Integer.valueOf(String.valueOf(valoraciones));
+                                Double media = Double.valueOf(String.valueOf(valoracionMedia));
+
+                                List<Comentario> comentarios = new ArrayList<>();
+                                firestore.collection("users").document(emailCurrentProfile).collection("recetas")
+                                        .document(id).collection("comentarios").get()
+                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
+                                                    Timestamp time = (Timestamp) query.get("fecha");
+
+                                                    comentarios.add(new Comentario((String) query.get("username"), (String) query.get("comentario"), time.toDate().toGMTString()));
+                                                }
+                                            }
+                                        });
+
+                                List<String> ingredientes = new ArrayList<>();
+                                firestore.collection("users").document(emailCurrentProfile).collection("recetas")
+                                        .document(id).collection("ingredientes").get()
+                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
+                                                    ingredientes.add((String) query.get("nombre"));
+                                                }
+                                            }
+                                        });
+
+                                Map<Integer, String> pasosDesordenados = new HashMap<>();
+                                firestore.collection("users").document(emailCurrentProfile).collection("recetas")
+                                        .document(id).collection("pasos").get()
+                                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                                for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
+                                                    Number num = (Number) query.get("numero");
+                                                    Integer numero = Integer.valueOf(String.valueOf(num));
+                                                    pasosDesordenados.put(numero, (String) query.get("texto"));
+                                                }
+                                                List<String> pasos = new ArrayList<>();
+                                                for (int i = 1; i < pasosDesordenados.size() + 1; i++) {
+                                                    pasos.add(pasosDesordenados.get(i));
+                                                }
+
+                                                receta = new Receta(id, username, titulo, dif, tiempo, vegano, vegetariano, sinGluten, val, media, imagen, fecha, comentarios, ingredientes, pasos);
+                                                init();
+                                            }
+                                        });
+                            }
+                        }
+
+
+                    });
+                }
+
+
+            }
+
+        });
+
+    }
+
+    public void generateDynamicLink() {
+
+        Task<ShortDynamicLink> dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
+                .setLink(Uri.parse("https://foodswapp.page.link?idReceta=" + receta.getId() + "&username=" + receta.getUsername()))
+                .setDomainUriPrefix("https://foodswapp.page.link")
+                .setAndroidParameters(
+                        new DynamicLink.AndroidParameters.Builder("com.example.foodswapp")
+                                .setMinimumVersion(1)
+                                .build())
+                .setIosParameters(
+                        new DynamicLink.IosParameters.Builder("com.example.foodswapp")
+                                .setAppStoreId("whatever")
+                                .setMinimumVersion("1.0.1")
+                                .build())
+                .setSocialMetaTagParameters(
+                        new DynamicLink.SocialMetaTagParameters.Builder()
+                                .setTitle("Receta compartida")
+                                .setDescription("Mira la receta de " + receta.getUsername())
+                                .setImageUrl(Uri.parse(receta.getImagen()))
+                                .build())
+                .buildShortDynamicLink()
+                .addOnCompleteListener(this, new OnCompleteListener<ShortDynamicLink>() {
+                    @Override
+                    public void onComplete(@NonNull Task<ShortDynamicLink> task) {
+                        if (task.isSuccessful()) {
+                            // Short link created
+                            Uri shortLink = task.getResult().getShortLink();
+                            Uri flowchartLink = task.getResult().getPreviewLink();
+                            Intent sendIntent = new Intent();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mira la receta que he encontrado" + ": " + shortLink.toString());
+                            sendIntent.setType("text/plain");
+
+                            Intent shareIntent = Intent.createChooser(sendIntent, null);
+                            startActivity(shareIntent);
+                        } else {
+                            // Error
+                            // ...
+                            Toast.makeText(RecetaSeleccionada.this, "ERROR", Toast.LENGTH_LONG).show();
+                            Log.d("FOODSWAPP", "ERROR " + task.getException());
+                        }
+                    }
+                });
     }
 }
