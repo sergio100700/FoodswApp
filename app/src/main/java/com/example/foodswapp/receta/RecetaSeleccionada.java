@@ -49,6 +49,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Clase que maneja y muestra la activity de una receta que se selecciona en alguno de los
+ * RecyclerViews.
+ */
 public class RecetaSeleccionada extends AppCompatActivity {
 
     private FirebaseFirestore firestore;
@@ -165,6 +169,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
             case R.id.action_share:
                 //Compartir
                 generateDynamicLink();
+
                 return true;
             case R.id.action_inform:
 

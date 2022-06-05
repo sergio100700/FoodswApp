@@ -12,6 +12,9 @@ import com.example.foodswapp.R;
 
 import java.util.ArrayList;
 
+/**
+ * Clase adaptador para visualización de la lista de ingredientes.
+ */
 public class Adaptador extends BaseAdapter {
 
     private Context context;

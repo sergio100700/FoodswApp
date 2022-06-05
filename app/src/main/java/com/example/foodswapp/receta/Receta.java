@@ -6,6 +6,9 @@ import com.google.firebase.Timestamp;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Clase objeto Receta donde se guardarán los datos de cada receta de cada usuario.
+ */
 public class Receta implements Serializable {
     private static final long serialVersionUID = 44L;
     private String id;

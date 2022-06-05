@@ -3,12 +3,9 @@ package com.example.foodswapp.receta.comentarios;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,31 +13,25 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.foodswapp.HomeActivity;
 import com.example.foodswapp.R;
 import com.example.foodswapp.databinding.FragmentComentariosBinding;
-import com.example.foodswapp.databinding.FragmentPerfilBinding;
 import com.example.foodswapp.receta.Receta;
-import com.example.foodswapp.ui.perfil.PerfilViewModel;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Clase que maneja el fragment de Comentarios y el funcionamiento de este.
+ */
 public class ComentariosFragment extends Fragment {
 
     private ComentariosViewModel comentariosViewModel;
@@ -52,6 +43,10 @@ public class ComentariosFragment extends Fragment {
     private ListView listViewComentarios;
     FirebaseFirestore firestore;
 
+    /**
+     * Constructor para obtener los comentarios a mostrar.
+     * @param receta la receta que contiene los comentarios.
+     */
     public ComentariosFragment(Receta receta) {
         this.receta = receta;
     }
@@ -93,6 +88,10 @@ public class ComentariosFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Establece el comportamiento del botón enviar para el texto que se introduzca como comentario.
+     * Se sube el comentario a la receta correspondiente con el username actual.
+     */
     private void onClickEnviar() {
         enviar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +109,11 @@ public class ComentariosFragment extends Fragment {
         });
     }
 
+    /**
+     * Establece el comportamiento del longClickItem para los comentarios.
+     * En caso de que el comentario al que se le hace click sea del propietario, se podrá eliminar.
+     * @param listViewComentarios el listView al que se desea establecer el listener.
+     */
     private void onComentarioLongClick(ListView listViewComentarios){
         listViewComentarios.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override

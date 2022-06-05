@@ -1,9 +1,10 @@
 package com.example.foodswapp.receta.comentarios;
 
-import com.google.firebase.Timestamp;
-
 import java.io.Serializable;
 
+/**
+ * Clase objeto Comentario donde se guardarán los datos de cada comentario de cada receta.
+ */
 public class Comentario implements Serializable {
 
     private static final long serialVersionUID = 44L;

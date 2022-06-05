@@ -22,6 +22,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * Adaptador para la visualización de las recetas en el el RecyclerView.
+ */
 public class AdapterReceta extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
 
 

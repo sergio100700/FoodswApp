@@ -1,9 +1,9 @@
 package com.example.foodswapp.ingrediente;
-
 import com.google.firebase.Timestamp;
 
-import java.time.LocalDateTime;
-
+/**
+ * Clase para objeto Ingrediente en el fragment de la lista.
+ */
 public class IngredienteLista {
     private String id;
     private String nombre;

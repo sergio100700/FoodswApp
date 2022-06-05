@@ -29,6 +29,9 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * Adaptador para la visualización de los comentarios en la receta.
+ */
 public class AdapterComentarios extends BaseAdapter {
 
 

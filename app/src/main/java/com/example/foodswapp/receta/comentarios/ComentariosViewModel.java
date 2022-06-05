@@ -8,6 +8,9 @@ import com.example.foodswapp.receta.Receta;
 
 import java.util.List;
 
+/**
+ * Clase modelo para los datos de la lista en el fragment de Comentarios.
+ */
 public class ComentariosViewModel extends ViewModel {
 
     private MutableLiveData<List<Comentario>> mComentarios;
