@@ -9,7 +9,7 @@
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.18771929824561404" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/drawable/splash_screen.xml" value="0.318859649122807" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/activity_home.xml" value="0.25" />
-        <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/activity_ingredientes_pasos.xml" value="0.3087719298245614" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/activity_ingredientes_pasos.xml" value="0.33" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/activity_login.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/activity_nueva_receta_crear.xml" value="0.33" />
@@ -22,13 +22,17 @@
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_busqueda.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_comentarios.xml" value="0.3087719298245614" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_dashboard.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_detalles.xml" value="0.33" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_home.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_ingredientes.xml" value="0.15833333333333333" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_ingredientes_pasos.xml" value="0.3087719298245614" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_lista.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_notifications.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_nuevareceta.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_pasos.xml" value="0.15833333333333333" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/fragment_perfil.xml" value="0.33" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/ingrediente.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/ingrediente_add.xml" value="0.5" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/nuevo_ingrediente.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/time_picker.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/Sergio/AndroidStudioProjects/FoodswApp/app/src/main/res/layout/top_perfil.xml" value="0.36666666666666664" />

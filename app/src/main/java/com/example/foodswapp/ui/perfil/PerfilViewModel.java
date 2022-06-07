@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Clase que actúa de ViewModel para el fragment del Perfil y obtiene los datos que se le pasarán de
+ * la base de datos.
+ */
 public class PerfilViewModel extends ViewModel {
 
     private MutableLiveData<String> username, numSeguidores, numSeguidos;

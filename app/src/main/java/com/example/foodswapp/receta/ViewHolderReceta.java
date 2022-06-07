@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foodswapp.R;
 
+/**
+ * Clase que actúa de ViewHolder para el adaptador AdapterReceta.
+ */
 public class ViewHolderReceta extends RecyclerView.ViewHolder {
 
     public ImageView itemImaxe;

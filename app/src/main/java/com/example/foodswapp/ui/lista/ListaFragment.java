@@ -41,6 +41,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Clase que determina el funcionamiento del fragment de Lista para almacenar lista de la compra.
+ */
 public class ListaFragment extends Fragment {
 
     private ListaViewModel listaViewModel;
@@ -85,6 +88,9 @@ public class ListaFragment extends Fragment {
         binding = null;
     }
 
+    /**
+     * Listener del botón de añadir un nuevo elemento a la lista.
+     */
     public void clickAddListener() {
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +139,10 @@ public class ListaFragment extends Fragment {
 
     }
 
+    /**
+     * Listener para mostrar diálogo al hacer una pulsación larga en un item de la lista. Pregunta si
+     * se quiere eliminar el elemento y si se elimina actualiza la lista y la base de datos.
+     */
     private void setItemClickLong() {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -169,6 +179,10 @@ public class ListaFragment extends Fragment {
         });
     }
 
+    /**
+     * Listener para el click en el item. En caso de hacer click el objeto seleccionado se marca como realizado y
+     * se tacha en la lista.
+     */
     private void setItemClick() {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -188,7 +202,9 @@ public class ListaFragment extends Fragment {
         });
     }
 
-
+    /**
+     * Consulta la lista en la base de datos y la actualiza.
+     */
     private void consultarBD() {
         firestore.collection("users").document(HomeActivity.EMAIL).collection("ingredientes").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override

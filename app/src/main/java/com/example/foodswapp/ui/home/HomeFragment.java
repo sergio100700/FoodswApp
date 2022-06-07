@@ -25,6 +25,10 @@ import com.example.foodswapp.receta.RecetaSeleccionada;
 
 import java.util.ArrayList;
 
+/**
+ * Clase que determina el funcionamiento del fragment Home y muestra las recetas de los usuarios a
+ * los que sigue el actual.
+ */
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
@@ -63,6 +67,10 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Actualiza los datos del ViewModel cuando se hace un swipe en la pantalla.
+     * @param view Vista que se actualiza.
+     */
     private void refreshListener(View view) {
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -73,6 +81,10 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    /**
+     * Listener del click en caso de hacer click en alguna receta para su visualización.
+     * @param recyclerView el RecyclerView del que se obtiene el item al que se hace click.
+     */
     private void listenerAdapter(RecyclerView recyclerView) {
         adapterReceta.setOnClickListener(new View.OnClickListener() {
             @Override

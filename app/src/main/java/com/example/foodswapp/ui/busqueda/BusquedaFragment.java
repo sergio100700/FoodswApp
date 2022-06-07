@@ -45,6 +45,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Clase que determina el funcionamiento del fragment de búsqueda de usuarios y recetas.
+ */
 public class BusquedaFragment extends Fragment {
 
     private BusquedaViewModel busquedaViewModel;
@@ -137,6 +140,10 @@ public class BusquedaFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Busca el usuario indicado en la base de datos.
+     * @param nombre username del usuario que se busca.
+     */
     private void buscarUsuario(String nombre) {
         CollectionReference users = firestore.collection("users");
 
@@ -154,6 +161,10 @@ public class BusquedaFragment extends Fragment {
 
     }
 
+    /**
+     * Busca la receta indicada en la base de datos con los filtros indicados.
+     * @param titulo el nombre de la receta por el cual se buscará.
+     */
     private void buscarReceta(String titulo) {
         idRecetasBuscadas.clear();
         idUsuarioReceta.clear();
@@ -201,9 +212,13 @@ public class BusquedaFragment extends Fragment {
 
     }
 
+    /**
+     * Obtiene todos los datos de la receta indicada para su visualización.
+     * @param docReceta documento de referencia de la receta buscada.
+     * @param emailCurrentReceta el email del usuario propietario de la receta.
+     */
     private void queryReceta(DocumentSnapshot docReceta,String emailCurrentReceta){
         String id = docReceta.getId();
-        //Timestamp fecha = (Timestamp) query.get("fecha"); igual lo tengo que implementar para mostrar por fecha
         String username = (String) docReceta.get("username");
         String titulo = (String) docReceta.get("titulo");
         String tiempo = (String) docReceta.get("tiempo");
@@ -265,6 +280,9 @@ public class BusquedaFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Listener para añadir un ingrediente a la lista de filtros por ingredientes.
+     */
     private void addIngredienteListener(){
         etIngrediente.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -279,6 +297,9 @@ public class BusquedaFragment extends Fragment {
         });
     }
 
+    /**
+     * Listener para eliminar un ingrediente de la lista en caso de hacer click en él.
+     */
     private void onClickIngrediente(){
         lvIngredientes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -289,7 +310,9 @@ public class BusquedaFragment extends Fragment {
         });
     }
 
-
+    /**
+     * Oculta y los campos del resultado de la búsqueda anterior y limpia las listas de búsqueda.
+     */
     private void onButtonVolver() {
         btnVolver.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -305,6 +328,9 @@ public class BusquedaFragment extends Fragment {
         });
     }
 
+    /**
+     * Listener que abre la visualización del usuario o la receta al que se ha hecho click.
+     */
     private void onItemClick() {
         lvBusqueda.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -325,7 +351,9 @@ public class BusquedaFragment extends Fragment {
         });
     }
 
-
+    /**
+     * Visualización de los objetos del resultado de búsqueda.
+     */
     private void camposBusqueda() {
         lvBusqueda.setVisibility(View.VISIBLE);
         busquedaRecetasLayout.setVisibility(View.INVISIBLE);

@@ -62,6 +62,10 @@ import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * Clase para la visualización de un perfil propio o externo que determina el funcionamiento del fragment
+ * Perfil y muestra sus recetas y datos.
+ */
 public class PerfilFragment extends Fragment {
 
     private final int GALLERY_INTENT = 10;
@@ -185,6 +189,10 @@ public class PerfilFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Listener para actualizar los datos que se visualizan de la base de datos.
+     * @param view vista que se desea actualizar.
+     */
     private void refreshListener(View view) {
         swipe = view.findViewById(R.id.fragment_perfil);
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -196,6 +204,11 @@ public class PerfilFragment extends Fragment {
         });
     }
 
+    /**
+     * Listener para el adaptador en caso de hacer click que abre una nueva actividad donde se muestran
+     * los detalles de la receta que se selecciona.
+     * @param recyclerView RecyclerView del que se obtiene el objeto seleccionado.
+     */
     private void listenerAdapter(RecyclerView recyclerView) {
         adapterReceta.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,6 +236,10 @@ public class PerfilFragment extends Fragment {
         binding = null;
     }
 
+    /**
+     * Listener que permite seleccionar una imagen para poner como perfil.
+     * @param imagenPerfil
+     */
     public void onClickListenerImagen(ImageView imagenPerfil) {
         imagenPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,6 +251,9 @@ public class PerfilFragment extends Fragment {
         });
     }
 
+    /**
+     * Listener del botón seguir para poder seguir usuarios o dejar de seguirlos.
+     */
     private void onClickSeguir(){
         btnSeguir.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -279,7 +299,9 @@ public class PerfilFragment extends Fragment {
         });
     }
 
-
+    /**
+     * Obtiene el usuario actual para saber si el usuario actual es el mismo que el usuario que se está visualizando.
+     */
     private void getCurrentUsername(){
 
         firestore.collection("users").document(HomeActivity.EMAIL).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -292,6 +314,9 @@ public class PerfilFragment extends Fragment {
         });
     }
 
+    /**
+     * Se obtiene el número de personas a las que sigue el usuario.
+     */
     private void siguiendo(){
         firestore.collection("users").document(HomeActivity.EMAIL).collection("siguiendo")
                 .whereIn("username", Collections.singletonList(usernameExterno)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

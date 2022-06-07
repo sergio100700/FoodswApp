@@ -17,7 +17,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="50dp"
         android:ems="10"
-        android:hint="Título"
+        android:hint="@string/titulo"
         android:inputType="textCapSentences"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="Dificultad"
+        android:text="@string/dificultad"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etTituloReceta" />
@@ -69,19 +69,19 @@
             android:id="@+id/cbVeganoNR"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vegano" />
+            android:text="@string/vegano" />
 
         <CheckBox
             android:id="@+id/cbVegetarianoNR"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vegetariano" />
+            android:text="@string/vegetariano" />
 
         <CheckBox
             android:id="@+id/cbSinGlutenNR"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sin Gluten" />
+            android:text="@string/sin_gluten" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat

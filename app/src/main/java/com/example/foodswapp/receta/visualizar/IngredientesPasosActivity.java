@@ -7,22 +7,27 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.foodswapp.R;
 import com.example.foodswapp.receta.Receta;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.ArrayList;
 
 public class IngredientesPasosActivity extends AppCompatActivity {
 
     private Receta receta;
     private ListView lvIngredientes,lvPasos;
     private ArrayAdapter<String> adapterIngredientes,adapterPasos;
-    private CheckBox vegano,vegetariano,sinGluten;
-    private ProgressBar dificultad;
-    private TextView tiempo;
-
+    private TabLayout tabLayout;
+    private ViewPagerAdapter viewPagerAdapter;
+    private ViewPager2 viewPager2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,27 +36,54 @@ public class IngredientesPasosActivity extends AppCompatActivity {
 
         this.receta = (Receta) getIntent().getSerializableExtra("receta");
 
-        lvIngredientes = findViewById(R.id.listViewIngredientes);
-        lvPasos = findViewById(R.id.listViewPasos);
-        vegano = findViewById(R.id.checkBoxVeganoIP);
-        vegetariano = findViewById(R.id.checkBoxVegetarianoIP);
-        sinGluten = findViewById(R.id.checkBoxSinGlutenIP);
-        dificultad = findViewById(R.id.progressBarDificultad);
-        tiempo = findViewById(R.id.textViewTiempoIP);
+        //lvPasos = findViewById(R.id.listViewPasos);
+        //adapterPasos = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, receta.getPasos());
+        //lvPasos.setAdapter(adapterPasos);
 
-        adapterIngredientes = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, receta.getIngredientes());
-        adapterPasos = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, receta.getPasos());
-        lvIngredientes.setAdapter(adapterIngredientes);
-        lvPasos.setAdapter(adapterPasos);
+        viewPager2 = findViewById(R.id.pager);
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),getLifecycle());
+        //Añadir fragments
 
-        setCampos();
+        DetallesFragment detalles = new DetallesFragment();
+        IngredientesFragment ingredientes = new IngredientesFragment();
+        PasosFragment pasos = new PasosFragment();
+
+        Bundle argsD = new Bundle();
+        argsD.putSerializable("receta",this.receta);
+        detalles.setArguments(argsD);
+
+        Bundle argsI = new Bundle();
+        argsI.putStringArrayList("ingredientes", (ArrayList<String>) this.receta.getIngredientes());
+        ingredientes.setArguments(argsI);
+
+        Bundle argsP = new Bundle();
+        argsP.putStringArrayList("pasos", (ArrayList<String>) this.receta.getPasos());
+        pasos.setArguments(argsP);
+
+        viewPagerAdapter.addFragment(detalles);
+        viewPagerAdapter.addFragment(ingredientes);
+        viewPagerAdapter.addFragment(pasos);
+
+        viewPager2.setAdapter(viewPagerAdapter);
+
+        tabLayout = findViewById(R.id.tabLayout);
+        new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
+            @Override
+            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                switch (position){
+                    case 0:
+                        tab.setText("Detalles");
+                        break;
+                    case 1:
+                        tab.setText("Ingredientes");
+                        break;
+                    case 2:
+                        tab.setText("Pasos");
+                        break;
+                }
+            }
+        }).attach();
+
     }
 
-    private void setCampos(){
-        vegano.setSelected(receta.isVegano());
-        vegetariano.setSelected(receta.isVegetariano());
-        sinGluten.setSelected(receta.isSinGluten());
-        dificultad.setProgress(receta.getDificultad());
-        tiempo.setText(receta.getTiempo());
-    }
 }

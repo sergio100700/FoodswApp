@@ -75,7 +75,7 @@ public class NuevaRecetaFragment  extends Fragment {
             private boolean filterLongEnough() {
                 String content = etMinutos.getText().toString().trim();
                 if(content.length()>0) {
-                    return Integer.parseInt(content) >= 60 || Integer.parseInt(content) < 0;
+                    return Integer.parseInt(content) > 60 || Integer.parseInt(content) < 0;
                 } else {
                     return false;
                 }
@@ -94,7 +94,7 @@ public class NuevaRecetaFragment  extends Fragment {
                 } else if( etMinutos.getText().length()<=0){
                     etMinutos.setError(getString(R.string.err_tiempo));
                 }else{
-                    if(etHoras.getText().length()<=0){etHoras.setText(0);}
+                    if(etHoras.getText().length()<=0){etHoras.setText("0");}
                     Intent intent = new Intent(getContext(), NuevaRecetaCrear.class);
                     intent.putExtra("RECETA", new Receta(titulo.getText().toString(), dificultad.getProgress(),
                             etHoras.getText().toString().concat(getString(R.string.horas_y)).concat(etMinutos.getText().toString()).concat(getString(R.string.minutos)),

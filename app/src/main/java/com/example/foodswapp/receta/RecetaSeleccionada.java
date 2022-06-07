@@ -49,6 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Clase que maneja y muestra la activity de una receta que se selecciona en alguno de los
  * RecyclerViews.
@@ -58,7 +60,8 @@ public class RecetaSeleccionada extends AppCompatActivity {
     private FirebaseFirestore firestore;
     private Receta receta;
     private ImageView imageView;
-    private TextView textViewTitulo, valoracionMedia;
+    private CircleImageView circlePerfil;
+    private TextView textViewTitulo, valoracionMedia,textViewUser;
     private RatingBar ratingBar;
     private ImageButton pasos;
     private String username;
@@ -82,11 +85,16 @@ public class RecetaSeleccionada extends AppCompatActivity {
 
     }
 
+    /**
+     * Inicia los pasos necesarios para la correcta visualización de la receta.
+     */
     private void init(){
         isExterna = !HomeActivity.USERNAME.equals(username);
 
         imageView = findViewById(R.id.imagenRS);
+        circlePerfil = findViewById(R.id.imagenPerfilRS);
         textViewTitulo = findViewById(R.id.textViewTituloRS);
+        textViewUser = findViewById(R.id.textViewUserNameRS);
         ratingBar = findViewById(R.id.ratingBar);
 
         pasos = findViewById(R.id.imageButtonPasos);
@@ -99,12 +107,25 @@ public class RecetaSeleccionada extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerView, fragmentComentarios).commit();
     }
 
+    /**
+     * Rellena los campos y las imágenes de la receta
+     */
     private void rellenarCampos() {
         if (receta.getImagen() == null) {
             imageView.setImageResource(R.mipmap.librococina);
         } else {
             Glide.with(getApplicationContext()).load(Uri.parse(receta.getImagen())).into(imageView);
         }
+        firestore.collection("users").whereIn("username", Collections.singletonList(receta.getUsername())).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                String imgPerfil = (String) queryDocumentSnapshots.getDocuments().get(0).get("perfil");
+                if(imgPerfil!=null){
+                    Glide.with(getApplicationContext()).load(Uri.parse(imgPerfil)).into(circlePerfil);
+                }
+            }
+        });
+        textViewUser.setText(receta.getUsername());
         textViewTitulo.setText(receta.getTitulo());
         valoracionMedia.setText(String.valueOf(receta.getValoracionMedia()));
 
@@ -132,6 +153,11 @@ public class RecetaSeleccionada extends AppCompatActivity {
         });
     }
 
+    /**
+     * Inflater del menú que se visualiza para poder eliminar o informar sobre la receta.
+     * @param menu el menú que se crea.
+     * @return true si se crea correctamente el menú o false en caso contrario.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -141,6 +167,11 @@ public class RecetaSeleccionada extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Se establece el comportamiento de cada item del menú.
+     * @param item el item del menú que se selecciona.
+     * @return true
+     */
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -205,6 +236,9 @@ public class RecetaSeleccionada extends AppCompatActivity {
         }
     }
 
+    /**
+     * Se abre la actividad que muestra información adicional sobre la receta y sus pasos e ingredientes.
+     */
     private void onClickPasos() {
         pasos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,6 +250,9 @@ public class RecetaSeleccionada extends AppCompatActivity {
         });
     }
 
+    /**
+     * Obtiene la valoración dada en caso de que exista y actualiza esta en caso de que cambie.
+     */
     private void setListenerRatingBar() {
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -270,13 +307,19 @@ public class RecetaSeleccionada extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Finaliza esta actividad.
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         finish();
     }
 
+    /**
+     * En caso de que la receta que se reciba sea proveniente de un link, se carga directamente de la base de datos.
+     * @param idReceta id de la receta que se descargará.
+     */
     private void cargarRecetaLink(String idReceta) {
         firestore.collection("users").whereIn("username", Collections.singletonList(this.username)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -369,6 +412,9 @@ public class RecetaSeleccionada extends AppCompatActivity {
 
     }
 
+    /**
+     * Genera un link dinámico a esta receta con el username actual y el id de la receta.
+     */
     public void generateDynamicLink() {
 
         Task<ShortDynamicLink> dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()

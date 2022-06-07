@@ -109,8 +109,11 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item){
         int id = item.getItemId();
         switch (id){
-            case R.id.editar_perfil:
-                Toast.makeText(getApplicationContext(),"Intent para editar perfil aún por hacer",Toast.LENGTH_LONG).show();
+            case R.id.recetas_semana:
+                String url = "https://sites.google.com/view/foodswapp/recetas-de-la-semana";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                startActivity(intent);
                 break;
             case R.id.cerrar_sesion:
                 logOut();

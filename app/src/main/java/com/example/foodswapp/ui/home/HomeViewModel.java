@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Clase ViewModel del fragment Home que obtiene los datos requeridos en el fragment.
+ */
 public class HomeViewModel extends ViewModel {
 
     private MutableLiveData<ArrayList<Receta>> recetas;
@@ -27,6 +30,9 @@ public class HomeViewModel extends ViewModel {
     private List<String> siguiendo;
     private FirebaseFirestore firestore;
 
+    /**
+     * Constructor sin parámetros para instanciar listas.
+     */
     public HomeViewModel() {
         firestore = FirebaseFirestore.getInstance();
         listaRecetas = new ArrayList<>();
@@ -38,7 +44,9 @@ public class HomeViewModel extends ViewModel {
         return recetas;
     }
 
-
+    /**
+     * Obtiene las recetas de los usuarios a los que sigue el actual usuario.
+     */
     public void populateList() {
         listaRecetas.clear();
 
@@ -135,7 +143,9 @@ public class HomeViewModel extends ViewModel {
 
     }
 
-
+    /**
+     * Obtiene los usuarios a los que sigue el actual usuario.
+     */
     private void getSiguiendo() {
         firestore.collection("users").document(HomeActivity.EMAIL).collection("siguiendo").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -150,6 +160,9 @@ public class HomeViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Actualiza los usuarios a los que sigue.
+     */
     public void refresh() {
         getSiguiendo();
     }

@@ -60,4 +60,6 @@
     <string name="sin_gluten">Sin Gluten</string>
     <string name="publicacion_eliminada">Publicación eliminada</string>
     <string name="eliminar_publicacion">¿Eliminar publicación permanentemente?</string>
+    <string name="titulo">Título</string>
+    <string name="dificultad">Dificultad</string>
 </resources>

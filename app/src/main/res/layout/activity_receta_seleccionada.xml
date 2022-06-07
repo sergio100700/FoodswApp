@@ -16,6 +16,22 @@
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent">
+<Toolbar
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imagenPerfilRS"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@mipmap/perfil" />
+
+    <TextView
+        android:id="@+id/textViewUserNameRS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:text="username" />
+</Toolbar>
 
     <ImageView
         android:id="@+id/imagenRS"

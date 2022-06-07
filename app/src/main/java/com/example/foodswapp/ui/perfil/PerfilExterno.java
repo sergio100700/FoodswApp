@@ -7,6 +7,9 @@ import android.os.Bundle;
 
 import com.example.foodswapp.R;
 
+/**
+ * Clase para la visualización de un perfil externo al del usuario actual.
+ */
 public class PerfilExterno extends AppCompatActivity {
 
     @Override
