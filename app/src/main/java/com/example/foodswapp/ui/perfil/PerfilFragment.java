@@ -327,6 +327,12 @@ public class PerfilFragment extends Fragment {
         });
     }
 
+    /**
+     * Obtiene el resultado de la actividad de seleccionar imagen de perfil y la actualiza en la base de datos.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -347,7 +353,7 @@ public class PerfilFragment extends Fragment {
                             firestore.collection("users").document(HomeActivity.EMAIL).set(imagen, SetOptions.merge());
                             perfilViewModel.refresh();
 
-                            Toast.makeText(getContext(), "Imagen de perfil actualizada", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getString(R.string.imagen_actualizada), Toast.LENGTH_LONG).show();
                         }
                     });
                 }

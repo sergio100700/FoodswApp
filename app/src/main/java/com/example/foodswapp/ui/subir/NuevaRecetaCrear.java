@@ -39,10 +39,14 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Clase para crear una nueva receta comenzando por su imagen y los ingredientes.
+ */
 public class NuevaRecetaCrear extends AppCompatActivity {
 
     private EditText ingrediente;
@@ -75,12 +79,24 @@ public class NuevaRecetaCrear extends AppCompatActivity {
         onClickListenerImagen();
     }
 
+    /**
+     * Listener para añadir un ingrediente a la lista cuando se haga click en el tick del teclado.
+     */
     private void addIngredienteListener(){
         ingrediente.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if(i == EditorInfo.IME_ACTION_DONE){
-                    ingredientes.add(textView.getText().toString());
+                    String[] separados = textView.getText().toString().split(",");
+
+                    for (String separado : separados) {
+                        if (!ingredientes.contains(separado)) {
+                            ingredientes.add(separado);
+                        } else {
+                            ingrediente.setError(getString(R.string.err_ingredientes_repetidos));
+                        }
+                    }
+
                     textView.setText("");
                     adaptador.notifyDataSetChanged();
                 }
@@ -89,24 +105,27 @@ public class NuevaRecetaCrear extends AppCompatActivity {
         });
     }
 
+    /**
+     * Listener para eliminar el ingrediente al que se le hace click.
+     */
     private void onItemClickListener(){
         listaIngredientes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 AlertDialog.Builder dialogo1 = new AlertDialog.Builder(view.getContext());
-                dialogo1.setTitle("Eliminar");
-                dialogo1.setMessage("¿Eliminar este ingrediente?");
+                dialogo1.setTitle(getString(R.string.eliminar));
+                dialogo1.setMessage(R.string.eliminar_ingrediente);
                 dialogo1.setCancelable(false);
-                dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                dialogo1.setPositiveButton(getString(R.string.aceptar), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogo1, int id) {
                         //borrar
                         ingredientes.remove(i);
                         adaptador.notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(),"Ingrediente eliminado",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.ingrediente_eliminado),Toast.LENGTH_SHORT).show();
 
                     }
                 });
-                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                dialogo1.setNegativeButton(getString(R.string.cancelar), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogo1, int id) {
                     }
                 });
@@ -116,6 +135,9 @@ public class NuevaRecetaCrear extends AppCompatActivity {
         });
     }
 
+    /**
+     * Listener para iniciar la activity de selección de imagen.
+     */
     private void onClickListenerImagen(){
         imagen.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,15 +147,23 @@ public class NuevaRecetaCrear extends AppCompatActivity {
         });
     }
 
+    /**
+     * Inicia la activity de selección de imagen.
+     */
     private void startCropActivity(){
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int width = metrics.widthPixels; // ancho absoluto en pixels
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON).setFixAspectRatio(true)
                 .start(this);
     }
 
+    /**
+     * Obtiene el resultado de la activity de selección de imagen y actualiza la uri.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -154,6 +184,11 @@ public class NuevaRecetaCrear extends AppCompatActivity {
 
     }
 
+    /**
+     * Creación del menú para pasar a la siguiente activity.
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate menu item siguiente

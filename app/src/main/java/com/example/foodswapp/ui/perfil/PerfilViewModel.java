@@ -48,11 +48,18 @@ public class PerfilViewModel extends ViewModel {
         numSeguidos = new MutableLiveData<>();
     }
 
+    /**
+     * Obtiene el usuario y obtiene sus datos.
+     * @param user
+     */
     public void setUser(String user) {
         this.user = user;
         getEmail();
     }
 
+    /**
+     * Cuenta el número de seguidores del usuario actual.
+     */
     private void setNumSeguidores() {
         firestore.collection("users").document(emailCurrentProfile).collection("seguidores").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -67,6 +74,9 @@ public class PerfilViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Cuenta el número de seguidos del usuario actual.
+     */
     private void setNumSeguidos() {
         firestore.collection("users").document(emailCurrentProfile).collection("siguiendo").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -81,6 +91,9 @@ public class PerfilViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Establece el nombre de usuario del actual.
+     */
     private void setUsername() {
         firestore.collection("users").document(emailCurrentProfile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -90,6 +103,9 @@ public class PerfilViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Establece la imagen de perfil del usuario actual.
+     */
     private void setImgPerfil() {
         firestore.collection("users").document(emailCurrentProfile).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -103,6 +119,9 @@ public class PerfilViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Obtiene el email del usuario actual para comprobar que quien está visualizando el perfil es él mismo o un usuario externo.
+     */
     private void getEmail() {
         CollectionReference users = firestore.collection("users");
         users.whereIn("username", Collections.singletonList(user)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -120,6 +139,9 @@ public class PerfilViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Rellena la lista de recetas para esta rellenar el recyclerview.
+     */
     public void populateList() {
 
 
@@ -207,7 +229,9 @@ public class PerfilViewModel extends ViewModel {
 
     }
 
-
+    /**
+     * Actualiza todos los campos.
+     */
     public void refresh() {
         setUsername();
         setImgPerfil();

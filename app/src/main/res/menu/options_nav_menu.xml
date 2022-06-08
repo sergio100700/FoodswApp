@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/cerrar_sesion"
-        android:title="Cerrar Sesión"
-        android:icon="@mipmap/logout"
-        app:showAsAction="always"/>
+        android:title="@string/cerrar_sesion"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/recetas_semana"
-        android:title="Recetas de la semana"
+        android:title="@string/recetas_de_la_semana"
         app:showAsAction="never"/>
 
 

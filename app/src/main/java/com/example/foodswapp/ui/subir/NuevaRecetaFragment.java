@@ -24,9 +24,11 @@ import com.example.foodswapp.receta.Receta;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment para crear nueva receta y establecer sus detalles principales.
+ */
 public class NuevaRecetaFragment  extends Fragment {
 
-    private NuevaRecetaViewModel recetaViewModel;
     private FragmentNuevarecetaBinding binding;
     private Button btnSiguiente;
     private EditText titulo,etMinutos,etHoras;
@@ -35,8 +37,6 @@ public class NuevaRecetaFragment  extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        recetaViewModel =
-                new ViewModelProvider(this).get(NuevaRecetaViewModel.class);
 
         binding = FragmentNuevarecetaBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -52,6 +52,10 @@ public class NuevaRecetaFragment  extends Fragment {
         return root;
     }
 
+    /**
+     * Corrige el texto del tiempo.
+     * @param view
+     */
     private void onKeyUpMinutos(View view){
         etMinutos = view.findViewById(R.id.etMinutos);
 
@@ -84,7 +88,9 @@ public class NuevaRecetaFragment  extends Fragment {
         etMinutos.addTextChangedListener(fieldValidatorTextWatcher);
     }
 
-
+    /**
+     * Envía los datos a la siguiente actividad y la inicia si cumple los requisitos.
+     */
     private void onClickBtnSiguiente(){
         btnSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +112,12 @@ public class NuevaRecetaFragment  extends Fragment {
 
     }
 
+    /**
+     * Reinicia los campos al terminar de crear la receta.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

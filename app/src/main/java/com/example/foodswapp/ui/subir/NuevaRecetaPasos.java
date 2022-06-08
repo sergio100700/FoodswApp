@@ -46,6 +46,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Activity para la introducción de los pasos de la receta.
+ */
 public class NuevaRecetaPasos extends AppCompatActivity {
 
     private ListView lvPasos;
@@ -79,13 +82,16 @@ public class NuevaRecetaPasos extends AppCompatActivity {
         onItemClickListener();
     }
 
+    /**
+     * Listener del botón para añadir el paso a la lista.
+     */
     private void addPasoListener() {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (editando) {
                     pasos.set(idEditando, paso.getText().toString());
-                    Toast.makeText(getApplicationContext(), "Paso modificado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.paso_modificado), Toast.LENGTH_SHORT).show();
                 } else {
                     pasos.add(paso.getText().toString());
                     adaptador.notifyDataSetChanged();
@@ -101,24 +107,26 @@ public class NuevaRecetaPasos extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Listener para eliminar el paso que se seleccione.
+     */
     private void onItemClickListener() {
         lvPasos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 AlertDialog.Builder dialogo1 = new AlertDialog.Builder(view.getContext());
-                dialogo1.setTitle("Paso " + i + 1);
-                dialogo1.setMessage("¿Qué deseas hacer con este ingrediente?");
+                dialogo1.setTitle(getString(R.string.paso_) + i + 1);
+                dialogo1.setMessage(R.string.que_hacer_paso);
                 dialogo1.setCancelable(false);
-                dialogo1.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
+                dialogo1.setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogo1, int id) {
                         pasos.remove(i);
                         adaptador.notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(), "Paso eliminado", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.paso_eliminado), Toast.LENGTH_SHORT).show();
 
                     }
                 });
-                dialogo1.setNegativeButton("Modificar", new DialogInterface.OnClickListener() {
+                dialogo1.setNegativeButton(R.string.modificar, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogo1, int id) {
                         paso.setText(pasos.get(i));
                         editando = true;
@@ -128,7 +136,7 @@ public class NuevaRecetaPasos extends AppCompatActivity {
 
                     }
                 });
-                dialogo1.setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
+                dialogo1.setNeutralButton(getString(R.string.cancelar), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
@@ -139,6 +147,11 @@ public class NuevaRecetaPasos extends AppCompatActivity {
         });
     }
 
+    /**
+     * Menú para finalizar la receta y subirla a la base ded atos.
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate menu item finalizar
@@ -158,6 +171,9 @@ public class NuevaRecetaPasos extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Guarda la receta en la base de datos llamando al método subir.
+     */
     private void guardarReceta() {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
@@ -184,6 +200,11 @@ public class NuevaRecetaPasos extends AppCompatActivity {
 
     }
 
+    /**
+     * Sube la receta a la base de datos.
+      * @param firestore
+     * @param uri
+     */
     private void subir(FirebaseFirestore firestore, Uri uri) {
         Map<String, Object> subir = new HashMap<>();
         subir.put("titulo", receta.getTitulo());
@@ -247,7 +268,7 @@ public class NuevaRecetaPasos extends AppCompatActivity {
                     }
                 });
 
-                Toast.makeText(getApplicationContext(), "Receta subida con éxito!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.receta_subida), Toast.LENGTH_LONG).show();
                 finish();
                 setResult(NuevaRecetaCrear.RECETA_FINALIZADA, getIntent());
             }

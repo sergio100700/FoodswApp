@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_blue_200">#90CAF9</color>
     <color name="green">#81C784</color>
+    <color name="salmon">#FC6067</color>
+    <color name="salmon_light">#B0FAD2D4</color>
+    <color name="salmon_dark">#CD4D53</color>
 </resources>

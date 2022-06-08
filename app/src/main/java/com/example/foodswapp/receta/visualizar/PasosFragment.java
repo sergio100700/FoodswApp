@@ -16,6 +16,9 @@ import com.example.foodswapp.databinding.FragmentPasosBinding;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment para la visualización de los pasos de la receta seleccionada.
+ */
 public class PasosFragment extends Fragment {
 
     private ArrayList<String> pasos;

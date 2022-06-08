@@ -43,6 +43,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.prefs.Preferences;
 
+/**
+ * Activity inicial del programa que gestiona la barra inferior de navegación y los fragments principales.
+ */
 public class HomeActivity extends AppCompatActivity {
 
     enum ProviderType{
@@ -67,7 +70,7 @@ public class HomeActivity extends AppCompatActivity {
         HomeActivity.EMAIL = email;
 
         tryToGetDynamicLink();
-
+        //Obtengo username actual
         FirebaseFirestore.getInstance().collection("users").document(email).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -104,6 +107,11 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Menú de cerrar sesión y recetas de la semana.
+     * @param item
+     * @return
+     */
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item){
@@ -124,6 +132,9 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Limpia las sharedPreferences y cierra sesión.
+     */
     private void logOut(){
         prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit();
         prefs.clear();
@@ -134,7 +145,9 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(this,LoginActivity.class));
     }
 
-    //Pruebas LINKS
+    /**
+     * Obtención de links en caso de que la aplicación sea abierta por uno.
+     */
     public void tryToGetDynamicLink() {
         FirebaseDynamicLinks.getInstance()
                 .getDynamicLink(getIntent())
@@ -152,14 +165,14 @@ public class HomeActivity extends AppCompatActivity {
                                 startActivity(intent);
                             }
                         } else {
-                            Log.d("WALKIRIA", "ERROR WITH DYNAMIC LINK OR NO LINK AT ALL");
+                            Log.d("FOODSWAPP", "ERROR WITH DYNAMIC LINK OR NO LINK AT ALL");
                         }
                     }
                 })
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("WALKIRIA", "ERROR WITH DYNAMIC LINK " + e.toString());
+                        Log.d("FOODSWAPP", "ERROR WITH DYNAMIC LINK " + e.toString());
 
                     }
                 });

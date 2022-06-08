@@ -20,11 +20,12 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 
+/**
+ * Actividad que gestiona la visualización de la receta y los fragments que compone.
+ */
 public class IngredientesPasosActivity extends AppCompatActivity {
 
     private Receta receta;
-    private ListView lvIngredientes,lvPasos;
-    private ArrayAdapter<String> adapterIngredientes,adapterPasos;
     private TabLayout tabLayout;
     private ViewPagerAdapter viewPagerAdapter;
     private ViewPager2 viewPager2;
@@ -35,10 +36,6 @@ public class IngredientesPasosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ingredientes_pasos);
 
         this.receta = (Receta) getIntent().getSerializableExtra("receta");
-
-        //lvPasos = findViewById(R.id.listViewPasos);
-        //adapterPasos = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_activated_1, receta.getPasos());
-        //lvPasos.setAdapter(adapterPasos);
 
         viewPager2 = findViewById(R.id.pager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),getLifecycle());
@@ -72,13 +69,13 @@ public class IngredientesPasosActivity extends AppCompatActivity {
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
                 switch (position){
                     case 0:
-                        tab.setText("Detalles");
+                        tab.setText(getString(R.string.detalles));
                         break;
                     case 1:
-                        tab.setText("Ingredientes");
+                        tab.setText(getString(R.string.Ingredientes));
                         break;
                     case 2:
-                        tab.setText("Pasos");
+                        tab.setText(getString(R.string.pasos));
                         break;
                 }
             }

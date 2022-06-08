@@ -53,6 +53,8 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="20dp"
+            android:backgroundTint="@color/black"
+            android:textColor="@color/white"
             android:text="@string/acceder" />
 
         <TextView
@@ -60,6 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:textStyle="bold"
             android:layout_marginStart="20dp"
             android:text="@string/pregunta_registro"/>
         <Button
@@ -69,6 +72,8 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/black"
             android:text="@string/registrar" />
         <Button
             android:id="@+id/buttonGoogle"

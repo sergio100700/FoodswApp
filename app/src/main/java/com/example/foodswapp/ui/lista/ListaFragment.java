@@ -150,10 +150,10 @@ public class ListaFragment extends Fragment {
                 final int posicion = i;
 
                 AlertDialog.Builder dialogo1 = new AlertDialog.Builder(binding.getRoot().getContext());
-                dialogo1.setTitle("Eliminar");
-                dialogo1.setMessage("¿Eliminar este ingrediente?");
+                dialogo1.setTitle(getString(R.string.eliminar));
+                dialogo1.setMessage(getString(R.string.eliminar_ingrediente));
                 dialogo1.setCancelable(false);
-                dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                dialogo1.setPositiveButton(getString(R.string.aceptar), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogo1, int id) {
                         //borrar
                         IngredienteLista ingrediente = ingredientes.get(i);
@@ -162,13 +162,13 @@ public class ListaFragment extends Fragment {
                             public void onSuccess(Void unused) {
                                 consultarBD();
                                 adaptador.notifyDataSetChanged();
-                                Toast.makeText(getContext(),"Ingrediente eliminado con éxito",Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(),getString(R.string.ingrediente_eliminado),Toast.LENGTH_LONG).show();
                             }
                         });
 
                     }
                 });
-                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                dialogo1.setNegativeButton(getString(R.string.cancelar), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogo1, int id) {
                     }
                 });

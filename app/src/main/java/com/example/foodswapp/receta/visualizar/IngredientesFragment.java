@@ -17,7 +17,9 @@ import com.example.foodswapp.receta.Receta;
 
 import java.util.ArrayList;
 
-
+/**
+ * Fragment para visualizar los ingredientes de la receta seleccionada.
+ */
 public class IngredientesFragment extends Fragment {
 
     private ArrayList<String> ingredientes;

@@ -431,8 +431,8 @@ public class RecetaSeleccionada extends AppCompatActivity {
                                 .build())
                 .setSocialMetaTagParameters(
                         new DynamicLink.SocialMetaTagParameters.Builder()
-                                .setTitle("Receta compartida")
-                                .setDescription("Mira la receta de " + receta.getUsername())
+                                .setTitle(getString(R.string.receta_compartida))
+                                .setDescription(getString(R.string.mira_la_receta_de) + receta.getUsername())
                                 .setImageUrl(Uri.parse(receta.getImagen()))
                                 .build())
                 .buildShortDynamicLink()
@@ -445,7 +445,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
                             Uri flowchartLink = task.getResult().getPreviewLink();
                             Intent sendIntent = new Intent();
                             sendIntent.setAction(Intent.ACTION_SEND);
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, "Mira la receta que he encontrado" + ": " + shortLink.toString());
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.mira_la_receta_encontrado) + ": " + shortLink.toString());
                             sendIntent.setType("text/plain");
 
                             Intent shareIntent = Intent.createChooser(sendIntent, null);

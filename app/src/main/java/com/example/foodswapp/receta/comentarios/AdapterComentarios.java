@@ -74,6 +74,7 @@ public class AdapterComentarios extends BaseAdapter {
         texto.setText(comentario.getTexto());
         username.setText(comentario.getUserName());
 
+        //Obtención de imagen del usuario que ha comentado
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         firestore.collection("users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override

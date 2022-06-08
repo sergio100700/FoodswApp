@@ -26,12 +26,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Adaptador para visualizar ingredientes de cada receta y añadirlos a la lista personal.
+ */
 public class AdapterIngredientes extends BaseAdapter {
 
 
     private Context context;
     private ArrayList<String> ingredientes;
-    FirebaseFirestore firestore;
+    private FirebaseFirestore firestore;
 
     public AdapterIngredientes(Context context, ArrayList<String> ingredientes) {
         this.context = context;
@@ -72,6 +75,11 @@ public class AdapterIngredientes extends BaseAdapter {
 
     }
 
+    /**
+     * OnClick para añadir a la lista personal de ingredientes el ingrediente deseado.
+     * @param imageButton al que se hace click
+     * @param pos posición de la lista en la que se hace click
+     */
     private void setOnClickImageButton(ImageButton imageButton,int pos){
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,8 +104,13 @@ public class AdapterIngredientes extends BaseAdapter {
         });
     }
 
+    /**
+     * SnackBar que informa de que el ingrediente ha sido añadido con éxito y que permite deshacer la operación.
+     * @param view vista del snackBar
+     * @param ref referencia del documento que se acaba de crear para deshacerlo en caso de ser necesario.
+     */
     private void setSnackBar(View view,String ref){
-        Snackbar mensaje = Snackbar.make(view,"Ingrediente añadido a tu lista personal.", Snackbar.LENGTH_LONG);
+        Snackbar mensaje = Snackbar.make(view, R.string.ingrediente_added, Snackbar.LENGTH_LONG);
         class DeshacerListener implements View.OnClickListener {
             @Override
             public void onClick(View view){
@@ -105,7 +118,7 @@ public class AdapterIngredientes extends BaseAdapter {
                 firestore.collection("users").document(HomeActivity.EMAIL).collection("ingredientes").document(ref).delete();
             }
         }
-        mensaje.setAction("Deshacer", new DeshacerListener());
+        mensaje.setAction(R.string.deshacer, new DeshacerListener());
         mensaje.show();
     }
 

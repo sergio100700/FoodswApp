@@ -9,17 +9,12 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.ArrayList;
 
+/**
+ * Adaptador para el ViewPage que actúa de intermediario entre los fragments y la IngredientesPasosActivity
+ */
 public class ViewPagerAdapter extends FragmentStateAdapter {
 
     ArrayList<Fragment> fragments = new ArrayList<>();
-
-    public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
-        super(fragmentActivity);
-    }
-
-    public ViewPagerAdapter(@NonNull Fragment fragment) {
-        super(fragment);
-    }
 
     public ViewPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);

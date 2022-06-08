@@ -16,6 +16,9 @@ import androidx.fragment.app.Fragment;
 import com.example.foodswapp.databinding.FragmentDetallesBinding;
 import com.example.foodswapp.receta.Receta;
 
+/**
+ * Fragment para mostrar los detalles de la receta seleccionada.
+ */
 public class DetallesFragment extends Fragment {
 
     private Receta receta;
@@ -50,7 +53,9 @@ public class DetallesFragment extends Fragment {
         return root;
     }
 
-
+    /**
+     * Rellena los campos para que correspondan con los detalles de la receta.
+     */
     private void setCampos(){
         vegano.setSelected(receta.isVegano());
         vegetariano.setSelected(receta.isVegetariano());

@@ -12,7 +12,7 @@
         android:layout_height="35dp"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-        android:background="@color/white"
+        android:background="@color/salmon_light"
         android:src="@mipmap/volver"
         android:layout_margin="3dp"
         android:visibility="invisible"
@@ -44,8 +44,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:iconifiedByDefault="false"
-            android:queryHint="Nombre del usuario"
-            android:tooltipText="Nombre del usuario"
+            android:queryHint="@string/nombre_usuario"
+            android:tooltipText="@string/nombre_usuario"
             android:searchIcon="@mipmap/search"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -57,8 +57,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:iconifiedByDefault="false"
-            android:queryHint="Nombre de la receta"
-            android:tooltipText="Nombre de la receta"
+            android:queryHint="@string/nombre_receta"
+            android:tooltipText="@string/nombre_receta"
             android:layout_marginTop="20dp"
             android:searchIcon="@mipmap/search"
             app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
-            android:text="Vegano"
+            android:text="@string/vegano"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/searchViewRecetas" />
 
@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="12dp"
-            android:text="Vegetariano"
+            android:text="@string/vegetariano"
             app:layout_constraintStart_toEndOf="@+id/cbVegano"
             app:layout_constraintTop_toBottomOf="@+id/searchViewRecetas" />
 
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="12dp"
-            android:text="Sin Gluten"
+            android:text="@string/sin_gluten"
             app:layout_constraintStart_toEndOf="@+id/cbVegetariano"
             app:layout_constraintTop_toBottomOf="@+id/searchViewRecetas" />
 
@@ -113,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
-            android:text="Con los ingredientes:"
+            android:text="@string/con_los_ingredientes"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cbVegano" />
 
