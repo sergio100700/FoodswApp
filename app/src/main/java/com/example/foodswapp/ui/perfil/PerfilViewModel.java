@@ -43,6 +43,7 @@ public class PerfilViewModel extends ViewModel {
         firestore = FirebaseFirestore.getInstance();
         username = new MutableLiveData<>();
         imgPerfil = new MutableLiveData<>();
+        listaRecetas = new ArrayList<>();
         recetas = new MutableLiveData<>();
         numSeguidores = new MutableLiveData<>();
         numSeguidos = new MutableLiveData<>();
@@ -143,6 +144,8 @@ public class PerfilViewModel extends ViewModel {
      * Rellena la lista de recetas para esta rellenar el recyclerview.
      */
     public void populateList() {
+        listaRecetas.clear();
+        recetas.setValue(listaRecetas);
 
 
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -152,7 +155,6 @@ public class PerfilViewModel extends ViewModel {
                 ArrayList<Receta> recetaLista = new ArrayList<>();
                 for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
                     String id = query.getId();
-                    //Timestamp fecha = (Timestamp) query.get("fecha"); igual lo tengo que implementar para mostrar por fecha
                     String username = (String) query.get("username");
                     String titulo = (String) query.get("titulo");
                     String tiempo = (String) query.get("tiempo");

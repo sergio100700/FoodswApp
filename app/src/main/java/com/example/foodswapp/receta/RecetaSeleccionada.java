@@ -182,9 +182,14 @@ public class RecetaSeleccionada extends AppCompatActivity {
                         .setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
 
-                                firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas").document(receta.getId()).delete();
-                                Toast.makeText(getApplicationContext(), getString(R.string.publicacion_eliminada), Toast.LENGTH_SHORT).show();
-                                finish();
+                                firestore.collection("users").document(HomeActivity.EMAIL).collection("recetas").document(receta.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(getApplicationContext(), getString(R.string.publicacion_eliminada), Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    }
+                                });
+
                             }
                         })
                         .setNegativeButton(R.string.cancelar, new DialogInterface.OnClickListener() {
