@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -24,6 +25,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.foodswapp.HomeActivity;
+import com.example.foodswapp.R;
 import com.example.foodswapp.databinding.FragmentBusquedaBinding;
 import com.example.foodswapp.receta.Receta;
 import com.example.foodswapp.receta.RecetaSeleccionada;
@@ -59,6 +61,7 @@ public class BusquedaFragment extends Fragment {
     private List<Receta> listaRecetas;
     private ConstraintLayout busquedaRecetasLayout;
     private ImageButton btnVolver;
+    private Button btnAdd;
     private CheckBox vegetariano, vegano, sinGluten;
     private EditText etIngrediente;
     private boolean esUsuario;
@@ -84,6 +87,7 @@ public class BusquedaFragment extends Fragment {
         vegano = binding.cbVegano;
         sinGluten = binding.cbGluten;
         btnVolver = binding.imageButtonVolver;
+        btnAdd = binding.buttonAddIB;
         onButtonVolver();
 
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_activated_1, listaBusqueda);
@@ -284,15 +288,16 @@ public class BusquedaFragment extends Fragment {
      * Listener para añadir un ingrediente a la lista de filtros por ingredientes.
      */
     private void addIngredienteListener(){
-        etIngrediente.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if(i == EditorInfo.IME_ACTION_DONE){
-                    listaIngredientes.add(textView.getText().toString());
-                    textView.setText("");
+            public void onClick(View view) {
+                if(listaIngredientes.size()<10) {
+                    listaIngredientes.add(etIngrediente.getText().toString());
+                    etIngrediente.setText("");
                     adapterIngredientes.notifyDataSetChanged();
+                } else {
+                    etIngrediente.setError(getString(R.string.err_maxingre));
                 }
-                return false;
             }
         });
     }

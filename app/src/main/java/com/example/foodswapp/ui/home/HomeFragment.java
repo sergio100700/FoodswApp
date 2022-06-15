@@ -91,12 +91,14 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
 
                 int idSeleccionado = recyclerView.getChildAdapterPosition(view);
-                Receta receta = adapterReceta.getRecetas().get(idSeleccionado);
+                if(adapterReceta.getRecetas().size()>0) {
+                    Receta receta = adapterReceta.getRecetas().get(idSeleccionado);
 
-                Intent intent = new Intent(getContext(), RecetaSeleccionada.class);
-                intent.putExtra("receta", receta);
-                intent.putExtra("user", HomeActivity.USERNAME);
-                startActivity(intent);
+                    Intent intent = new Intent(getContext(), RecetaSeleccionada.class);
+                    intent.putExtra("receta", receta);
+                    intent.putExtra("user", HomeActivity.USERNAME);
+                    startActivity(intent);
+                }
             }
         });
 

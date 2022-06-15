@@ -75,7 +75,7 @@ public class IngredientesPasosActivity extends AppCompatActivity {
                         tab.setText(getString(R.string.Ingredientes));
                         break;
                     case 2:
-                        tab.setText(getString(R.string.pasos));
+                        tab.setText(getString(R.string.pasos_));
                         break;
                 }
             }

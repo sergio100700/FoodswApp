@@ -50,7 +50,6 @@ public class HomeViewModel extends ViewModel {
     public void populateList() {
         listaRecetas.clear();
 
-
         firestore.collection("users").whereIn("username", siguiendo).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryUsuariosSeguidos) {
@@ -63,7 +62,6 @@ public class HomeViewModel extends ViewModel {
                             ArrayList<Receta> recetaLista = new ArrayList<>();
                             for (QueryDocumentSnapshot query : queryDocumentSnapshots) {
                                 String id = query.getId();
-                                //Timestamp fecha = (Timestamp) query.get("fecha"); igual lo tengo que implementar para mostrar por fecha
                                 String username = (String) query.get("username");
                                 String titulo = (String) query.get("titulo");
                                 String tiempo = (String) query.get("tiempo");
@@ -150,8 +148,12 @@ public class HomeViewModel extends ViewModel {
         firestore.collection("users").document(HomeActivity.EMAIL).collection("siguiendo").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                siguiendo.clear();
                 for (DocumentSnapshot doc : queryDocumentSnapshots) {
                     siguiendo.add((String) doc.get("username"));
+                    if(siguiendo.size()==10){
+                        break;
+                    }
                 }
                 if(siguiendo.size()>0){
                     populateList();

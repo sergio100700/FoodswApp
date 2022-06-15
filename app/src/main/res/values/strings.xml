@@ -77,7 +77,7 @@
     <string name="mira_la_receta_encontrado">Mira la receta que he encontrado</string>
     <string name="imagen_actualizada">Imagen de perfil actualizada</string>
     <string name="paso_modificado">Paso modificado</string>
-    <string name="paso_">\"Paso \"</string>
+    <string name="paso_">\Paso \</string>
     <string name="que_hacer_paso">¿Qué deseas hacer con este paso?</string>
     <string name="paso_eliminado">Paso eliminado</string>
     <string name="modificar">Modificar</string>
@@ -85,4 +85,6 @@
     <string name="nombre_receta">Nombre de la receta</string>
     <string name="nombre_usuario">Nombre del usuario</string>
     <string name="con_los_ingredientes">Con los ingredientes:</string>
+    <string name="pasos_">Pasos</string>
+    <string name="err_maxingre">Máximo de 10 ingredientes</string>
 </resources>

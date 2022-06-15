@@ -103,7 +103,7 @@ public class NuevaRecetaFragment  extends Fragment {
                     if(etHoras.getText().length()<=0){etHoras.setText("0");}
                     Intent intent = new Intent(getContext(), NuevaRecetaCrear.class);
                     intent.putExtra("RECETA", new Receta(titulo.getText().toString(), dificultad.getProgress(),
-                            etHoras.getText().toString().concat(getString(R.string.horas_y)).concat(etMinutos.getText().toString()).concat(getString(R.string.minutos)),
+                            etHoras.getText().toString().concat(getString(R.string.horas_y)).concat(" "+etMinutos.getText().toString()).concat(getString(R.string.minutos)),
                             vegano.isSelected(), vegetariano.isSelected(), sinGluten.isSelected(), new ArrayList<Comentario>()));
                     startActivityForResult(intent,NuevaRecetaCrear.RECETA_FINALIZADA);
                 }

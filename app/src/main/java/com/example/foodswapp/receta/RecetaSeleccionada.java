@@ -75,6 +75,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
 
         firestore = FirebaseFirestore.getInstance();
         this.username = (String) getIntent().getExtras().getString("user");
+        isExterna = !HomeActivity.USERNAME.equals(username);
         if(getIntent().getExtras().getString("recetaId")!=null){
             cargarRecetaLink(getIntent().getExtras().getString("recetaId"));
         } else {
@@ -89,8 +90,6 @@ public class RecetaSeleccionada extends AppCompatActivity {
      * Inicia los pasos necesarios para la correcta visualización de la receta.
      */
     private void init(){
-        isExterna = !HomeActivity.USERNAME.equals(username);
-
         imageView = findViewById(R.id.imagenRS);
         circlePerfil = findViewById(R.id.imagenPerfilRS);
         textViewTitulo = findViewById(R.id.textViewTituloRS);
@@ -433,7 +432,7 @@ public class RecetaSeleccionada extends AppCompatActivity {
                         new DynamicLink.SocialMetaTagParameters.Builder()
                                 .setTitle(getString(R.string.receta_compartida))
                                 .setDescription(getString(R.string.mira_la_receta_de) + receta.getUsername())
-                                .setImageUrl(Uri.parse(receta.getImagen()))
+                                .setImageUrl(receta.getImagen()==null? Uri.parse("R.mipmap.librococina") : Uri.parse(receta.getImagen()))
                                 .build())
                 .buildShortDynamicLink()
                 .addOnCompleteListener(this, new OnCompleteListener<ShortDynamicLink>() {

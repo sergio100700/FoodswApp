@@ -123,12 +123,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:iconifiedByDefault="false"
-            android:maxLines="1"
             android:inputType="textPersonName"
+            android:maxLines="1"
             android:queryHint="Ingrediente"
             android:tooltipText="Ingrediente"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/buttonAddIB"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+        <Button
+            android:id="@+id/buttonAddIB"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:text="+"
+            app:layout_constraintBottom_toTopOf="@+id/listViewIngredientesBuscar"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

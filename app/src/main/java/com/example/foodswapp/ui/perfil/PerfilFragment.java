@@ -178,7 +178,6 @@ public class PerfilFragment extends Fragment {
                     esPerfilPropio = false;
                     btnSeguir.setVisibility(View.VISIBLE);
 
-                    onClickSeguir();
                     siguiendo();
                 }
             }
@@ -258,10 +257,10 @@ public class PerfilFragment extends Fragment {
         btnSeguir.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                String username = usernameExterno;
+
                     if(!isChecked){ //Dejar de seguir
                         firestore.collection("users").document(HomeActivity.EMAIL).collection("siguiendo")
-                                .whereIn("username", Collections.singletonList(username)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                .whereIn("username", Collections.singletonList(usernameExterno)).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                 if(queryDocumentSnapshots.getDocuments().size()>0){
@@ -283,7 +282,7 @@ public class PerfilFragment extends Fragment {
                         });
                     } else { //Seguir
                         Map<String,String> user = new HashMap<>();
-                        user.put("username",username);
+                        user.put("username",usernameExterno);
                         firestore.collection("users").document(HomeActivity.EMAIL).collection("siguiendo").add(user);
                         Map<String,String> esteUser = new HashMap<>();
                         esteUser.put("username",HomeActivity.USERNAME);
@@ -323,6 +322,7 @@ public class PerfilFragment extends Fragment {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 btnSeguir.setChecked(queryDocumentSnapshots.size() > 0);
+                onClickSeguir();
             }
         });
     }

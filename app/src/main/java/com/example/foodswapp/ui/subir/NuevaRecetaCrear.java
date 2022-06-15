@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -50,6 +51,7 @@ import java.util.Objects;
 public class NuevaRecetaCrear extends AppCompatActivity {
 
     private EditText ingrediente;
+    private Button btnAdd;
     private ImageView imagen;
     private List<String> ingredientes;
     private ArrayAdapter<String> adaptador;
@@ -69,6 +71,7 @@ public class NuevaRecetaCrear extends AppCompatActivity {
 
         imagen = findViewById(R.id.ivImagenNR);
         ingrediente = findViewById(R.id.etIngredienteNR);
+        btnAdd = findViewById(R.id.btnAdd);
         listaIngredientes = findViewById(R.id.listaIngredientes);
 
         ingredientes = new ArrayList<>();
@@ -83,24 +86,21 @@ public class NuevaRecetaCrear extends AppCompatActivity {
      * Listener para añadir un ingrediente a la lista cuando se haga click en el tick del teclado.
      */
     private void addIngredienteListener(){
-        ingrediente.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if(i == EditorInfo.IME_ACTION_DONE){
-                    String[] separados = textView.getText().toString().split(",");
+            public void onClick(View view) {
+                String[] separados = ingrediente.getText().toString().split(",");
 
-                    for (String separado : separados) {
-                        if (!ingredientes.contains(separado)) {
-                            ingredientes.add(separado);
-                        } else {
-                            ingrediente.setError(getString(R.string.err_ingredientes_repetidos));
-                        }
+                for (String separado : separados) {
+                    if (!ingredientes.contains(separado)) {
+                        ingredientes.add(separado);
+                    } else {
+                        ingrediente.setError(getString(R.string.err_ingredientes_repetidos));
                     }
-
-                    textView.setText("");
-                    adaptador.notifyDataSetChanged();
                 }
-                return false;
+
+                ingrediente.setText("");
+                adaptador.notifyDataSetChanged();
             }
         });
     }

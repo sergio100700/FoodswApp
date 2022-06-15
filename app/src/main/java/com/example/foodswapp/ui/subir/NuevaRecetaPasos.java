@@ -115,12 +115,14 @@ public class NuevaRecetaPasos extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 AlertDialog.Builder dialogo1 = new AlertDialog.Builder(view.getContext());
-                dialogo1.setTitle(getString(R.string.paso_) + i + 1);
+                dialogo1.setTitle(getString(R.string.paso_) +" "+ (i + 1));
                 dialogo1.setMessage(R.string.que_hacer_paso);
                 dialogo1.setCancelable(false);
                 dialogo1.setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogo1, int id) {
                         pasos.remove(i);
+                        String num = String.valueOf(pasos.size() + 1);
+                        numPaso.setText(num);
                         adaptador.notifyDataSetChanged();
                         Toast.makeText(getApplicationContext(), getString(R.string.paso_eliminado), Toast.LENGTH_SHORT).show();
 
